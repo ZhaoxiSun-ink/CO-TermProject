@@ -1,5 +1,5 @@
 # CO-TermProject
-2019 CSCI2500 Term Project
+*2019 CSCI2500 Term Project*
 
 Group：<br/>
 1.Zhaoxi Sun sunz5<br/>
