@@ -6,9 +6,9 @@ import sys
 
 
 arguments = sys.argv[1:]
-
+branches = {}
 def getInstructions(arguments):#Hongbo Zhao
-    branches = {}
+    global branches
     mode = arguments[0]
     file = arguments[1]
     instruction = ""
@@ -108,11 +108,9 @@ def read_instruction(instruction, tt)：#Zhaoxi Sun
                     operand2 = instruction[i+1:i+3]
              elif instruction[i-1] == "," and operand_count == 1:
                 destination = instruction[i:len(instruction)]
-                
+destinations = {}                
 def set_destinationStage(destination, current_stage):#Hongbo Zhao
-    def set_destinationStage(destination, current_stage):
     global destinations
-    destinations = {}
     destinations[destination] = current_stage
 
     
