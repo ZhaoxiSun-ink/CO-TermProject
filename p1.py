@@ -171,5 +171,13 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
     count = len(cycle_instruction)
     
     for i in range(count):
-        
-        
+        print(cycle_instruction[i],'\t')
+        if len(cycle_instrucitons[i]) < 16:
+            print("\t")
+        for j in range(16):
+            if i != 15:
+                print(cycle_stages[i][j],'\t')
+            else
+                print(cycle_stages[i][j],'\n')
+                
+         
