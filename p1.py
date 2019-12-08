@@ -109,3 +109,4 @@ def read_instruction(instruction, tt)：#Zhaoxi Sun
              elif instruction[i-1] == "," and operand_count == 1:
                 destination = instruction[i:len(instruction)]
                 
+def set_destinationStage(destination, current_stage):#Hongbo Zhao
