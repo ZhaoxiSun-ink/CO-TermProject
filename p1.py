@@ -141,5 +141,17 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
                 v0 = 0
     else:
         v2 = int(operand2)
+        if operation== 'addi':
+            v0 = v1 + v2
+        elif operation == 'andi':
+            v0 = v1 & v2
+        elif operation == 'ori':
+            v0 = v1 ^v2
+            
+        elif operation == 'slti':
+            if v1 < v2 :
+                v0 = 1
+            else:
+                v0 = 0
         
             
