@@ -110,3 +110,10 @@ def read_instruction(instruction, tt)：#Zhaoxi Sun
                 destination = instruction[i:len(instruction)]
                 
 def set_destinationStage(destination, current_stage):#Hongbo Zhao
+    def set_destinationStage(destination, current_stage):
+    global destinations
+    destinations = {}
+    destinations[destination] = current_stage
+
+    
+
