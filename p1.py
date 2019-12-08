@@ -123,7 +123,7 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
     if operation1 == "zero":
         v1 = 0
     else:
-        v1 = register_file[operand1][1] #    assuming maps are implemented as lists of lists
+        v1 = register_file[operand1][1] #    assuming maps are implemented as dictionary of lists
     if operation == "add" or operation == "and" or operation == "or" or operation == "slt":
         v2 = register_file[operand2][1]
         if operation == "add":
@@ -156,7 +156,7 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
     
 def put_b_in_a(destination, register_file):#Mike Yang
     global register_file
-    register_file[destination][1] = register_file[destination][1]# assumed lists of list for register file
+    register_file[destination][1] = register_file[destination][1]# assumed dictionary of list for register file
 
 def get_value(operand, register_file, operand_value):#Mike Yang
     global operand_value
@@ -181,7 +181,7 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
                 print(cycle_stages[i][j],'\n')
     print("\n")
     
-    print("$s0 =",register_file['s0'][0],'\t\t')
+    print("$s0 =",register_file['s0'][0],'\t\t') # assumed as above
     print("$s1 =",register_file['s1'][0],'\t\t')
     print("$s2 =",register_file['s2'][0],'\t\t')
     print("$s3 =",register_file['s3'][0],'\n')
@@ -199,4 +199,5 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
     print("$t7 =",register_file['t7'][0],'\n')
     print("$t8 =",register_file['t8'][0],'\t\t')
     print("$t9 =",register_file['t9'][0],'\n')
+    print("----------------------------------------------------------------------------------\n")
          
