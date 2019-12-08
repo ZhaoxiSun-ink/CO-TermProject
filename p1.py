@@ -153,5 +153,6 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
                 v0 = 1
             else:
                 v0 = 0
-        
-            
+    assert <v0 != -1>
+    register_file[destination][1] = v0
+    
