@@ -121,4 +121,9 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
     global destination 
     global operation1
     global operation2
+    v0 = 0
+    if operation1 == "zero":
+        v1 = 0
+    else:
+        v1 = register_file[operand1][1]#assuming maps are implemented as lists of lists
     
