@@ -156,9 +156,14 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
     
 def put_b_in_a(destination, register_file):#Mike Yang
     global register_file
-    register_file[destination][1] = register_file[destination][1]
+    register_file[destination][1] = register_file[destination][1]# assumed lists of list for register file
 
-def get_value(operand, register_file, operand_value):
+def get_value(operand, register_file, operand_value):#Mike Yang
     global operand_value
-    operand_value = register_file[operand][1]
+    operand_value = register_file[operand][1] #assumed as above
+    
+def get_branchIndex(destination, branches, next_destination_index): #Mike Yang
+    global next_instruction_index
+    next_instruction_index = branches[destination]
 
+def 
