@@ -55,6 +55,7 @@ def set_cycleStages(cycle_stages, i, j, current_stage):#Hongbo Zhao
             cycle_stages[j][i] = "*"
         else:
             cycle_stages[j][i] = "WB"
-
+            
+def getOperation(instruction, operation):#Hongbo Zhao
 
     
