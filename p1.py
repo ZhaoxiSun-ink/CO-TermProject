@@ -179,5 +179,24 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
                 print(cycle_stages[i][j],'\t')
             else
                 print(cycle_stages[i][j],'\n')
-                
+    print("\n")
+    
+    print("$s0 =",register_file['s0'][0],'\t\t')
+    print("$s1 =",register_file['s1'][0],'\t\t')
+    print("$s2 =",register_file['s2'][0],'\t\t')
+    print("$s3 =",register_file['s3'][0],'\t\t')
+    print("$s4 =",register_file['s4'][0],'\t\t')
+    print("$s5 =",register_file['s5'][0],'\t\t')
+    print("$s6 =",register_file['s6'][0],'\t\t')
+    print("$s7 =",register_file['s7'][0],'\t\t')
+    print("$t0 =",register_file['0'][0],'\t\t')
+    print("$t1 =",register_file['t1'][0],'\t\t')
+    print("$t2 =",register_file['t2'][0],'\t\t')
+    print("$t3 =",register_file['t3'][0],'\t\t')
+    print("$t4 =",register_file['t4'][0],'\t\t')
+    print("$t5 =",register_file['t5'][0],'\t\t')
+    print("$t6 =",register_file['t6'][0],'\t\t')
+    print("$t7 =",register_file['t7'][0],'\t\t')
+    print("$t8 =",register_file['t8'][0],'\t\t')
+    print("$t9 =",register_file['t9'][0],'\t\t')
          
