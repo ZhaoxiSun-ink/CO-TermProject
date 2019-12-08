@@ -125,5 +125,21 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
     if operation1 == "zero":
         v1 = 0
     else:
-        v1 = register_file[operand1][1]#assuming maps are implemented as lists of lists
-    
+        v1 = register_file[operand1][1] #    assuming maps are implemented as lists of lists
+    if operation == "add" or operation == "and" or operation == "or" or operation == "slt":
+        v2 = register_file[operand2][1]
+        if operation == "add":
+            v0 = v1 + v2
+        elif operation == "and":
+            v0 = v1 & v2
+        elif operation == "or":
+            v0 = v1^v2
+        elif operation == "slt":
+            if v1 < v2:
+                v0 = 1
+            else:
+                v0 = 0
+    else:
+        v2 = int(operand2)
+        
+            
