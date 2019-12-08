@@ -166,4 +166,10 @@ def get_branchIndex(destination, branches, next_destination_index): #Mike Yang
     global next_instruction_index
     next_instruction_index = branches[destination]
 
-def 
+def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
+    print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
+    count = len(cycle_instruction)
+    
+    for i in range(count):
+        
+        
