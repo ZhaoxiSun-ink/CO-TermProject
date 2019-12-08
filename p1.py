@@ -113,7 +113,7 @@ def set_destinationStage(destination, current_stage):#Hongbo Zhao
     global destinations
     destinations[destination] = current_stage
 
-def initialize_register_file():
+def initialize_register_file():#Mike Yang
     ret = {}
     ret['s0'] = [0,0]
     ret['s1'] = [0,0]
