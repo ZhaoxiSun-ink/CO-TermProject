@@ -59,3 +59,16 @@ def set_cycleStages(cycle_stages, i, j, current_stage):#Hongbo Zhao
 def getOperation(instruction, operation):#Hongbo Zhao
 
     
+def read_instruction(instruction, tt)：#Zhaoxi Sun
+    #gloabl variables to allow us to change the data in the function
+    global destination
+    global operand1
+    global operand2
+    
+    if tt=="N":
+        operand_count = 0
+        for i in range(len(instruction)):
+            if instruction[i] == "$":
+                if operand_count == 0: #count is 0, just destination
+                    operand_count += 1
+                    
