@@ -114,4 +114,8 @@ def set_destinationStage(destination, current_stage):#Hongbo Zhao
     destinations[destination] = current_stage
 
     
+    
+    
+    
+def update_registerFile(operation, destination, operand1, operand2, register_file):#Mike Yang
 
