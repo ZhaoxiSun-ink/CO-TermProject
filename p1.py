@@ -20,7 +20,7 @@ def getInstructions(arguments):#Hongbo Zhao
         line_num += 1
         lenOfInst = len(line)
         if line[lenOfInst-1] == ":":
-            branch_name = line[0,lenOfInst-1]
+            branch_name = line[0: lenOfInst-1]
             branches[branch_name] = line_num
     f.close()
 
@@ -57,6 +57,19 @@ def set_cycleStages(cycle_stages, i, j, current_stage):#Hongbo Zhao
             cycle_stages[j][i] = "WB"
             
 def getOperation(instruction, operation):#Hongbo Zhao
+    lenInst = len(instruction)
+    if instruction[len-1] == ':':
+        return "branch"
+    if instruction == "nop":
+        return "nop"
+    index = 0
+    while instruction[index] != ' ':
+        index += 1
+    operation = instruction[0:index]
+    if operation == "bne" or operation == "beq":
+        return "J"
+    else:
+        return "I"
 
     
 def read_instruction(instruction, tt)：#Zhaoxi Sun
@@ -96,5 +109,3 @@ def read_instruction(instruction, tt)：#Zhaoxi Sun
              elif instruction[i-1] == "," and operand_count == 1:
                 destination = instruction[i:len(instruction)]
                 
-               
-def
