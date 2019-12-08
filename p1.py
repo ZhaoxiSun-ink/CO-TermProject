@@ -118,9 +118,7 @@ def set_destinationStage(destination, current_stage):#Hongbo Zhao
     
     
 def update_registerFile(operation, destination, operand1, operand2, register_file):#Mike Yang
-    global destination 
-    global operation1
-    global operation2
+    global register_file
     v0 = 0
     if operation1 == "zero":
         v1 = 0
@@ -157,5 +155,10 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
     register_file[destination][1] = v0
     
 def put_b_in_a(destination, register_file):#Mike Yang
-    global destination
+    global register_file
     register_file[destination][1] = register_file[destination][1]
+
+def get_value(operand, register_file, operand_value):
+    global operand_value
+    operand_value = register_file[operand][1]
+
