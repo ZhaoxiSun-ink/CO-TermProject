@@ -156,3 +156,6 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
     assert <v0 != -1>
     register_file[destination][1] = v0
     
+def put_b_in_a(destination, register_file):#Mike Yang
+    global destination
+    register_file[destination][1] = register_file[destination][1]
