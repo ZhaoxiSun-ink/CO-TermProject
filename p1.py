@@ -26,4 +26,35 @@ def getInstructions(arguments):#Hongbo Zhao
 
 
 def set_cycleStages(cycle_stages, i, j, current_stage):#Hongbo Zhao
+    if current_stage == 1:
+        k = 0
+        while k < j:
+            cycle_stages[j].append(".")
+            k += 1
+        cycle_stages[j].append("IF");
+        k = j + 1
+        while k < 16:
+            k += 1
+            cycle_stages[j].append(".")
+    elif cycle_stages[j][i] == "*":
+        pass
+    elif current_stage == 2:
+        cycle_stages[j][i] = "ID"
+    elif current_stage == 3:
+        if cycle_stages[j][i-1] == "*":
+            cycle_stages[j][i] = "*"
+        else:
+            cycle_stages[j][i] = "EX"
+    elif current_stage == 4:
+        if cycle_stages[j][i-1] == "*":
+            cycle_stages[j][i] = "*"
+        else:
+            cycle_stages[j][i] = "MEM"
+    elif current_stage == 5:
+        if cycle_stages[j][i-1] == "*":
+            cycle_stages[j][i] = "*"
+        else:
+            cycle_stages[j][i] = "WB"
+
+
     
