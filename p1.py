@@ -113,6 +113,27 @@ def set_destinationStage(destination, current_stage):#Hongbo Zhao
     global destinations
     destinations[destination] = current_stage
 
+def initialize_register_file():
+    ret = {}
+    ret['s0'] = [0,0]
+    ret['s1'] = [0,0]
+    ret['s2'] = [0,0]
+    ret['s3'] = [0,0]
+    ret['s4'] = [0,0]
+    ret['s5'] = [0,0]
+    ret['s6'] = [0,0]
+    ret['s7'] = [0,0]
+    ret['t0'] = [0,0]
+    ret['t1'] = [0,0]
+    ret['t2'] = [0,0]
+    ret['t3'] = [0,0]
+    ret['t4'] = [0,0]
+    ret['t5'] = [0,0]
+    ret['t6'] = [0,0]
+    ret['t7'] = [0,0]
+    ret['t8'] = [0,0]
+    ret['t9'] = [0,0]
+    return ret
     
     
     
