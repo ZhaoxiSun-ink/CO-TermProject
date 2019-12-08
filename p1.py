@@ -64,11 +64,37 @@ def read_instruction(instruction, tt)：#Zhaoxi Sun
     global destination
     global operand1
     global operand2
-    
+    #N type
     if tt=="N":
         operand_count = 0
         for i in range(len(instruction)):
             if instruction[i] == "$":
                 if operand_count == 0: #count is 0, just destination
                     operand_count += 1
-                    
+                    destination = instruction[i+1:i+3]
+                elif operand_count == 1:
+                    if instruction[i+1] == "z":
+                        operand1 = instruction[i+1:i+5]
+                    else:
+                        operand1 = instruction[i+1,i+3]
+                    operand_count += 1
+            elif instruction[i] == "," and operand_count == 2:
+                if instruction[i+1] == "$":
+                    operand2 = instruction[i+1:i+3]
+                else:
+                    operand2 = instruction[i+1,len(instruction)]
+    #J type
+    elif tt== "J":
+        operand_count = 0
+        for i in range(len(instruction)):
+            if instruction[i] == "$":
+                if operand_count == 0:
+                    operand_count+=1;
+                    operand1 = instruction[i+1:i+3]
+                elif operand_count == 1:
+                    operand2 = instruction[i+1:i+3]
+             elif instruction[i-1] == "," and operand_count == 1:
+                destination = instruction[i:len(instruction)]
+                
+               
+def
