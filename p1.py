@@ -118,4 +118,7 @@ def set_destinationStage(destination, current_stage):#Hongbo Zhao
     
     
 def update_registerFile(operation, destination, operand1, operand2, register_file):#Mike Yang
-
+    global destination 
+    global operation1
+    global operation2
+    
