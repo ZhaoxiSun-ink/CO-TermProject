@@ -24,3 +24,6 @@ def getInstructions(arguments):#Hongbo Zhao
             branches[branch_name] = line_num
     f.close()
 
+
+def set_cycleStages(cycle_stages, i, j, current_stage):#Hongbo Zhao
+    
