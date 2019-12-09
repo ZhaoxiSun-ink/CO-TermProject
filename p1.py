@@ -221,4 +221,60 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
     print("$t8 =",register_file['t8'][0],'\t\t')
     print("$t9 =",register_file['t9'][0],'\n')
     print("----------------------------------------------------------------------------------\n")
+    def add_star (cycle_stages,instruction_index,cycle):#Qiran Sun
+    global cycle_stages
+    cycle_stages[instruction_index][cycle] = "*"
+
+def get_nopNumber(operand1, operand2, destinations)# Qiran Sun
+    global destinations
+    it1= destinations.get(operand1);
+    it2=destinations.get(operand2);
+    if it1!= None and it2!= None:
+        tmp = min(destinations[operand1], destinations[operand2])
+        if tmp>6:
+            return 0
+        else
+            return 6-temp
+
+    else if it1!= None:
+        tmp = destinations[operand1]
+        if(tmp > 6)
+            return 0;
+        
+        else 
+            return 6 - tmp
+
+    else if(it2 != None)
+        tmp = destinations[operand2]
+        if(tmp > 6)
+            return 0
+        
+        else 
+            return 6 -tmp
+        
+    
+    else
+        return 0
+
+
+def insert_nop(nop_num, cycle_stages, cycle_instructions, j,  i) # Qiran Sun
+    global cycle_instructions
+    global cycle_stages
+    global nop_num
+    for i in range (nop_num):
+        cycle_instructions.insert(i,"nop")
+        i++
+
+    temp_stage = cycle_stages[j]
+    temp_stage[i] = "*"
+    for i in range (nop_num):
+        cycle_stages.insert(i,temp_stage)
+        i++
+
+    cycle_stages[  j + nop_num  ][i] = "ID"
+    if (cycle_stages[j + nop_num+1].size !=0)
+        cycle_stages[j + nop_num+1][i] = "IF";
+
+    return;
+    
          
