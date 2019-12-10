@@ -263,13 +263,13 @@ def insert_nop(nop_num, cycle_stages, cycle_instructions, j,  i) # Qiran Sun
     global nop_num
     for i in range (nop_num):
         cycle_instructions.insert(i,"nop")
-        i++
+        i+=1
 
     temp_stage = cycle_stages[j]
     temp_stage[i] = "*"
     for i in range (nop_num):
         cycle_stages.insert(i,temp_stage)
-        i++
+        i+=1
 
     cycle_stages[  j + nop_num  ][i] = "ID"
     if (cycle_stages[j + nop_num+1].size !=0)
