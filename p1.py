@@ -83,14 +83,18 @@ def read_instruction(instruction, destination,operand1,operand2,tt):#Zhaoxi Sun
                 elif operand_count == 1:
                     if instruction[i+1] == "z":
                         operand1 = instruction[i+1:i+5]
+                        print(operand1)
                     else:
                         operand1 = instruction[i+1:i+3]
+                        print(operand1)
                     operand_count += 1
             elif instruction[i] == "," and operand_count == 2:
                 if instruction[i+1] == "$":
                     operand2 = instruction[i+2:i+4]
+                    print(operand2)
                 else:
                     operand2 = instruction[i+1:len(instruction)]
+                    print(operand2)
     #J type
     elif tt== "J":
         operand_count = 0
@@ -425,6 +429,7 @@ if __name__ == '__main__':#Hongbo Zhao
                         set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
                         
                     elif current_stage == 5:
+
                         update_registerFile(operation, destination, operand1, operand2, register_file)
                         put_b_in_a(destination, register_file)
                         set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
