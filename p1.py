@@ -368,8 +368,8 @@ if __name__ == '__main__':#Hongbo Zhao
                             get_branchIndex(destination, branches, next_instruction_index)
                             cycle_instructions.append(instructions[next_instruction_index])
                             next_instruction_index += 1
-                if current_stage == 5 and find(cycle_stages[j].begin(), cycle_stages[j].end(),"*")==cycle_stages[j].end():
-                    put_b_in_a(destination, register_file)       
+                if current_stage == 5 and "*" in cycle_stages[j]:
+                    put_b_in_a(destination, register_file)         
                     
 
                 
