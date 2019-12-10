@@ -315,5 +315,6 @@ def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num) # Q
     
     return
 
-
+if __name__ == '__main__':#Hongbo Zhao
+    
 
