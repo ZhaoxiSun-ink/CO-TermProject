@@ -5,9 +5,8 @@ import sys
 
 
 
-arguments = sys.argv[1:]
-branches = {}
-def getInstructions(arguments):#Hongbo Zhao
+
+def getInstructions(arguments, instructions, branches):#Hongbo Zhao
     global branches
     mode = arguments[0]
     file = arguments[1]
@@ -72,7 +71,7 @@ def getOperation(instruction, operation):#Hongbo Zhao
         return "I"
 
     
-def read_instruction(instruction, tt)：#Zhaoxi Sun
+def read_instruction(instruction, tt):#Zhaoxi Sun
     #gloabl variables to allow us to change the data in the function
     global destination
     global operand1
@@ -106,9 +105,9 @@ def read_instruction(instruction, tt)：#Zhaoxi Sun
                     operand1 = instruction[i+1:i+3]
                 elif operand_count == 1:
                     operand2 = instruction[i+1:i+3]
-             elif instruction[i-1] == "," and operand_count == 1:
+            elif instruction[i-1] == "," and operand_count == 1:
                 destination = instruction[i:len(instruction)]
-destinations = {}                
+               
 def set_destinationStage(destination, current_stage):#Hongbo Zhao
     global destinations
     destinations[destination] = current_stage
@@ -172,7 +171,7 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
                 v0 = 1
             else:
                 v0 = 0
-    assert <v0 != -1>
+    assert v0 != -1
     register_file[destination][1] = v0
     
 def put_b_in_a(destination, register_file):#Mike Yang
@@ -198,7 +197,7 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
         for j in range(16):
             if i != 15:
                 print(cycle_stages[i][j],'\t')
-            else
+            else:
                 print(cycle_stages[i][j],'\n')
     print("\n")
     
@@ -226,7 +225,7 @@ def add_star (cycle_stages,instruction_index,cycle):#Qiran Sun
     global cycle_stages
     cycle_stages[instruction_index][cycle] = "*"
 
-def get_nopNumber(operand1, operand2, destinations)# Qiran Sun
+def get_nopNumber(operand1, operand2, destinations):# Qiran Sun
     global destinations
     global operand1
     global operand2
@@ -260,7 +259,7 @@ def get_nopNumber(operand1, operand2, destinations)# Qiran Sun
         return 0
 
 
-def insert_nop(nop_num, cycle_stages, cycle_instructions, j,  i) # Qiran Sun
+def insert_nop(nop_num, cycle_stages, cycle_instructions, j,  i): # Qiran Sun
     global cycle_instructions
     global cycle_stages
     global nop_num
@@ -281,18 +280,18 @@ def insert_nop(nop_num, cycle_stages, cycle_instructions, j,  i) # Qiran Sun
     return
     
 
-def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num) # Qiran Sun
+def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num): # Qiran Sun
     global cycle_stages
     if current_stage == 1: 
-        for k in range j:
+        for k in range(j):
             cycle_stages[j].append(".")
         cycle_stages[j].append("IF")
         k=j+1
-        for k in range 16:
+        for k in range(16):
             cycle_stages[j].append(".")
         
     
-    else if ( (cycle_stages[j][i - 1] == "*" and cycle_stages[j][i - 3] == "IF") or  (cycle_stages[j][i - 1] == "*" and  cycle_stages[j][i - 3] == "ID") ) :
+    elif ( (cycle_stages[j][i - 1] == "*" and cycle_stages[j][i - 3] == "IF") or  (cycle_stages[j][i - 1] == "*" and  cycle_stages[j][i - 3] == "ID") ) :
         cycle_stages[j][i] = "*"
         return
     
@@ -316,5 +315,62 @@ def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num) # Q
     return
 
 if __name__ == '__main__':#Hongbo Zhao
-    
+    arguments = sys.argv[1:]
+    branches = {}
+    destinations = {}
+    instructions = []
+    cycle_instructions= []
+    cycle_stages = []
+    temp = []
+    for i in range(16):
+        cycle_stages.append(temp)
+        getInstructions(argv[2], instructions, branches)
+    if arguments[0] != "F":
+        print("START OF SIMULATION (forwarding)")
+        print("----------------------------------------------------------------------------------")
+        
+        next_instruction_index = 0
+        for i in range(16):
+            for j in range(len(cycle_instructions)+1):
+                if j == i:
+                    if len(cycle_instructions) != j + 1:
+                        if next_instruction_index >= len(instructions):
+                            break
+                        
+                        instruction_type = getOperation(instructions[next_instruction_index],operation)
+                        if instruction_type == "branch":
+                            next_instruction_index += 1
+                            
+                        cycle_instructions.append(instructions[next_instruction_index])
+                        next_instruction_index += 1
+                if j == len(cycle_instructions):
+                    break
+                
+                current_instruction = cycle_instructions[j]
+                current_stage = i - j + 1
+                set_cycleStages(cycle_stages, i, j, current_stage)
+                instruction_type = getOperation(current_instruction,operation)
+                
+                if instruction_type != "J":
+                    read_instruction(current_instruction, destination, operand1, operand2, 'N')
+                    if(current_stage == 3):
+                        update_registerFile(operation, destination, operand1, operand2, register_file)
+                        
+                if instruction_type =="J":
+                    read_instruction(current_instruction, destination, operand1, operand2, 'J')
+                    if current_stage==5:
+                        get_value(operand1, register_file, operand1_value)
+                        get_value(operand2, register_file, operand2_value)
+                        
+                        if (operation =="beq" and operand1_value == operand2_value) or (operation == "bne" and operand1_value != operand2_value):
+                            for k in range(1,4):
+                                add_stars(cycle_stages, j+k, i)
+                            get_branchIndex(destination, branches, next_instruction_index)
+                            cycle_instructions.append(instructions[next_instruction_index])
+                            next_instruction_index += 1
+                if current_stage == 5 and find(cycle_stages[j].begin(), cycle_stages[j].end(),"*")==cycle_stages[j].end():
+                    put_b_in_a(destination, register_file)       
+                    
+
+                
 
