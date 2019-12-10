@@ -137,7 +137,7 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
     if operand1 == "zero":
         v1 = 0
     else:
-        v1 = register_file[operand1][1] #    assuming maps are implemented as dictionary of lists
+        v1 = register_file[operand1][1]
     if operation == "add" or operation == "and" or operation == "or" or operation == "slt":
         v2 = register_file[operand2][1]
         if operation == "add":
@@ -213,14 +213,15 @@ def add_stars (cycle_stages,instruction_index,cycle):#Qiran Sun
     cycle_stages[instruction_index][cycle] = "*"
 
 def get_nopNumber(operand1, operand2, destinations):# Qiran Sun
+    tmp = 0
     it1= destinations.get(operand1)
     it2=destinations.get(operand2)
     if it1!= None and it2!= None:
         tmp = min(destinations[operand1], destinations[operand2])
-        if tmp>6:
+        if tmp > 6:
             return 0
         else:
-            return 6-temp
+            return 6 - tmp
 
     elif it1!= None:
         tmp = destinations[operand1]
@@ -298,10 +299,6 @@ if __name__ == '__main__':#Hongbo Zhao
     cycle_instructions= []
     cycle_stages = [[]]
     temp = []
-    operation = ""
-    destination = ""
-    operand1 = ""
-    operand2 = ""
     
     
     for i in range(16):
@@ -314,6 +311,9 @@ if __name__ == '__main__':#Hongbo Zhao
         next_instruction_index = 0
         for i in range(16):
             for j in range(len(cycle_instructions)+1):
+                current_instruction = ""
+                operation = ""
+                instruction_type = ""
                 if j == i:
                     if len(cycle_instructions) != j + 1:
                         if next_instruction_index >= len(instructions):
@@ -331,32 +331,41 @@ if __name__ == '__main__':#Hongbo Zhao
                 current_instruction = cycle_instructions[j]
                 current_stage = i - j + 1
                 set_cycleStages(cycle_stages, i, j, current_stage)
-                instruction_type = getOperation(current_instruction,operation)
                 
+                instruction_type = getOperation(current_instruction,operation)
+                destination = ""
+                operand1 = ""
+                operand2 = ""
+                                
                 if instruction_type != "J":
                     read_instruction(current_instruction, destination, operand1, operand2, 'N')
                     if(current_stage == 3):
                         update_registerFile(operation, destination, operand1, operand2, register_file)
                         
-                if instruction_type =="J":
+                if instruction_type == "J":
                     read_instruction(current_instruction, destination, operand1, operand2, 'J')
                     if current_stage==5:
+                        operand1_value = 0
+                        operand2_value = 0
                         get_value(operand1, register_file, operand1_value)
                         get_value(operand2, register_file, operand2_value)
                         
                         if (operation =="beq" and operand1_value == operand2_value) or (operation == "bne" and operand1_value != operand2_value):
                             for k in range(1,4):
                                 add_stars(cycle_stages, j+k, i)
+                                
                             get_branchIndex(destination, branches, next_instruction_index)
                             cycle_instructions.append(instructions[next_instruction_index])
                             next_instruction_index += 1
-                if current_stage == 5 and "*" in cycle_stages[j]:
+                            
+                if current_stage == 5 and "*" not in cycle_stages[j]:
                     put_b_in_a(destination, register_file)
                 
                 if (j == len(cycle_instructions) - 1) and current_stage == 5:
                     print_cycle(cycle_instructions, cycle_stages, register_file)
                     print("END OF SIMULATION")
             print_cycle(cycle_instructions, cycle_stages, register_file)
+    
     if arguments[0] == "N":
         print("START OF SIMULATION (no forwarding)")
         print("----------------------------------------------------------------------------------")
@@ -365,8 +374,12 @@ if __name__ == '__main__':#Hongbo Zhao
         nops_number = []
         for i in range(16):
             nops_number.append(0)
+            
         for i in range(16):
             for j in range(len(cycle_instructions)+1):
+                current_instruction = ""
+                operation = ""
+                instruction_type = ""           
                 if j == i:
                     if len(cycle_instructions) != j + 1:
                         if next_instruction_index >= len(instructions):
@@ -385,8 +398,11 @@ if __name__ == '__main__':#Hongbo Zhao
                 current_stage = i - j + 1
                 
                 instruction_type = getOperation(current_instruction,operation)
+                destination = ""
+                operand1 = ""
+                operand2 = ""
                 
-                if instruction_type != "nop":
+                if instruction_type == "nop":
                     set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
                     
                         
@@ -433,11 +449,14 @@ if __name__ == '__main__':#Hongbo Zhao
                             set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
                     elif current_stage == 5:
                         set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
+                        operand1_value = 0
+                        operand2_value = 0
                         get_value(operand1, register_file, operand1_value)
                         get_value(operand2, register_file, operand2_value)
+                        
                         if (operation == "beq" and operand1_value == operand2_value) or (operation == "bne" and operand1_value != operand2_value):
                             get_branchIndex(destination, branches, next_instruction_index)
-                            cycle_instructions.push_back(instructions[next_instruction_index])
+                            cycle_instructions.append(instructions[next_instruction_index])
                             next_instruction_index += 1
                             set_cycleStages(cycle_stages, i, j + 4, 1)  
                     elif i != j:
