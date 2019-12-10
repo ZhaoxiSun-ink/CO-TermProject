@@ -103,6 +103,7 @@ def read_instruction(instruction, destination,operand1,operand2,tt):#Zhaoxi Sun
                     operand2 = instruction[i+1:i+3]
             elif instruction[i-1] == "," and operand_count == 1:
                 destination = instruction[i:len(instruction)]
+    return [destination, operand1,operand2]
                
 def set_destinationStage(destination, current_stage, destinations):#Hongbo Zhao
     destinations[destination] = current_stage
@@ -338,12 +339,18 @@ if __name__ == '__main__':#Hongbo Zhao
                 operand2 = ""
                                 
                 if instruction_type != "J":
-                    read_instruction(current_instruction, destination, operand1, operand2, 'N')
+                    temp1 = read_instruction(current_instruction, destination, operand1, operand2, 'N')
+                    destination = temp1[0]
+                    operand1 = temp1[1]
+                    operand2 = temp1[2]
                     if(current_stage == 3):
                         update_registerFile(operation, destination, operand1, operand2, register_file)
                         
                 if instruction_type == "J":
-                    read_instruction(current_instruction, destination, operand1, operand2, 'J')
+                    temp2 = read_instruction(current_instruction, destination, operand1, operand2, 'J')
+                    destination = temp2[0]
+                    operand1 = temp2[1]
+                    operand2 = temp2[2]
                     if current_stage==5:
                         operand1_value = 0
                         operand2_value = 0
@@ -407,7 +414,10 @@ if __name__ == '__main__':#Hongbo Zhao
                     
                         
                 elif instruction_type !="J":
-                    read_instruction(current_instruction, destination, operand1, operand2, 'N')
+                    temp3 = read_instruction(current_instruction, destination, operand1, operand2, 'N')
+                    destination = temp3[0]
+                    operand1 = temp3[1]
+                    operand2 = temp3[2]
                     set_destinationStage(destination, current_stage, destinations)
                     if current_stage == 3:
                         nop = get_nopNumber(operand1, operand2, destinations)
@@ -432,7 +442,10 @@ if __name__ == '__main__':#Hongbo Zhao
                         set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
                         
                 elif instruction_type == "J":
-                    read_instruction(current_instruction, destination, operand1, operand2, 'J')
+                    temp4 = read_instruction(current_instruction, destination, operand1, operand2, 'J')
+                    destination = temp4[0]
+                    operand1 = temp4[1]
+                    operand2 = temp4[2]
                     set_destinationStage(destination, current_stage, destinations)
                     if current_stage == 3:
                         nop = get_nopNumber(operand1, operand2, destinations)
