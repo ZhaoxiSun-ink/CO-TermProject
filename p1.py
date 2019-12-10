@@ -33,7 +33,7 @@ def set_cycleStages(cycle_stages, i, j, current_stage):#Hongbo Zhao
         for k in range(16):
             cycle_stages[j].append(".")
     elif cycle_stages[j][i] == "*":
-        return
+        pass
     elif current_stage == 2:
         cycle_stages[j][i] = "ID"
     elif current_stage == 3:
@@ -178,7 +178,7 @@ def get_branchIndex(destination, branches, next_destination_index): #Mike Yang
 
 def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
     print("CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16")
-    count = len(cycle_instructions)
+    count = int(len(cycle_instructions))
     
     for i in range(count):
         print("%-20s"%cycle_instructions[i],end="")
@@ -213,8 +213,8 @@ def add_stars (cycle_stages,instruction_index,cycle):#Qiran Sun
     cycle_stages[instruction_index][cycle] = "*"
 
 def get_nopNumber(operand1, operand2, destinations):# Qiran Sun
-    it1= destinations.get(operand1);
-    it2=destinations.get(operand2);
+    it1= destinations.get(operand1)
+    it2=destinations.get(operand2)
     if it1!= None and it2!= None:
         tmp = min(destinations[operand1], destinations[operand2])
         if tmp>6:
@@ -291,21 +291,22 @@ def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num): # 
 
 if __name__ == '__main__':#Hongbo Zhao
     arguments = sys.argv[1:]
+    instructions = []
     branches = {}
     destinations = {}
-    instructions = []
+    register_file = initialize_register_file()
     cycle_instructions= []
-    cycle_stages = []
+    cycle_stages = [[]]
     temp = []
     operation = ""
     destination = ""
     operand1 = ""
     operand2 = ""
-    register_file = initialize_register_file()
+    
     
     for i in range(16):
         cycle_stages.append(temp)
-        getInstructions(arguments, instructions, branches)
+    getInstructions(arguments, instructions, branches)
     if arguments[0] == "F":
         print("START OF SIMULATION (forwarding)")
         print("----------------------------------------------------------------------------------")
