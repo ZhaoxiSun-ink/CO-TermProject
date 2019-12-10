@@ -83,18 +83,14 @@ def read_instruction(instruction, destination,operand1,operand2,tt):#Zhaoxi Sun
                 elif operand_count == 1:
                     if instruction[i+1] == "z":
                         operand1 = instruction[i+1:i+5]
-                        print(operand1)
                     else:
                         operand1 = instruction[i+1:i+3]
-                        print(operand1)
                     operand_count += 1
             elif instruction[i] == "," and operand_count == 2:
                 if instruction[i+1] == "$":
                     operand2 = instruction[i+2:i+4]
-                    print(operand2)
                 else:
                     operand2 = instruction[i+1:len(instruction)]
-                    print(operand2)
     #J type
     elif tt== "J":
         operand_count = 0
@@ -191,26 +187,26 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
                 print("%-4s"%cycle_stages[i][j],end="")
             else:
                 print(cycle_stages[i][j])
-    print("\n")
+    print("")
   
     print("$s0 = %-14d"%register_file['s0'][0],end="") # assumed as above
     print("$s1 = %-14d"%register_file['s1'][0],end="")
     print("$s2 = %-14d"%register_file['s2'][0],end="")
-    print("$s3 =",register_file['s3'][0],'\n')
+    print("$s3 =",register_file['s3'][0])
     print("$s4 = %-14d"%register_file['s4'][0],end="")
     print("$s5 = %-14d"%register_file['s5'][0],end="")
     print("$s6 = %-14d"%register_file['s6'][0],end="")
-    print("$s7 =",register_file['s7'][0],'\n')
+    print("$s7 =",register_file['s7'][0])
     print("$t0 = %-14d"%register_file['t0'][0],end="")
     print("$t1 = %-14d"%register_file['t1'][0],end="")
     print("$t2 = %-14d"%register_file['t2'][0],end="")
-    print("$t3 =",register_file['t3'][0],'\n')
+    print("$t3 =",register_file['t3'][0])
     print("$t4 = %-14d"%register_file['t4'][0],end="")
     print("$t5 = %-14d"%register_file['t5'][0],end="")
     print("$t6 = %-14d"%register_file['t6'][0],end="")
-    print("$t7 =",register_file['t7'][0],'\n')
+    print("$t7 =",register_file['t7'][0])
     print("$t8 = %-14d"%register_file['t8'][0],end="")
-    print("$t9 =",register_file['t9'][0],'\n')
+    print("$t9 =",register_file['t9'][0])
     print("----------------------------------------------------------------------------------\n")
    
 def add_stars (cycle_stages,instruction_index,cycle):#Qiran Sun
@@ -429,7 +425,6 @@ if __name__ == '__main__':#Hongbo Zhao
                         set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
                         
                     elif current_stage == 5:
-
                         update_registerFile(operation, destination, operand1, operand2, register_file)
                         put_b_in_a(destination, register_file)
                         set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
