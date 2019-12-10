@@ -221,39 +221,42 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
     print("$t8 =",register_file['t8'][0],'\t\t')
     print("$t9 =",register_file['t9'][0],'\n')
     print("----------------------------------------------------------------------------------\n")
-    def add_star (cycle_stages,instruction_index,cycle):#Qiran Sun
+   
+def add_star (cycle_stages,instruction_index,cycle):#Qiran Sun
     global cycle_stages
     cycle_stages[instruction_index][cycle] = "*"
 
 def get_nopNumber(operand1, operand2, destinations)# Qiran Sun
     global destinations
+    global operand1
+    global operand2
     it1= destinations.get(operand1);
     it2=destinations.get(operand2);
     if it1!= None and it2!= None:
         tmp = min(destinations[operand1], destinations[operand2])
         if tmp>6:
             return 0
-        else
+        else:
             return 6-temp
 
-    else if it1!= None:
+    elif it1!= None:
         tmp = destinations[operand1]
-        if(tmp > 6)
-            return 0;
-        
-        else 
-            return 6 - tmp
-
-    else if(it2 != None)
-        tmp = destinations[operand2]
-        if(tmp > 6)
+        if(tmp > 6):
             return 0
         
-        else 
+        else: 
+            return 6 - tmp
+
+    elif it2 != None :
+        tmp = destinations[operand2]
+        if(tmp > 6):
+            return 0
+        
+        else:
             return 6 -tmp
         
     
-    else
+    else:
         return 0
 
 
@@ -263,18 +266,54 @@ def insert_nop(nop_num, cycle_stages, cycle_instructions, j,  i) # Qiran Sun
     global nop_num
     for i in range (nop_num):
         cycle_instructions.insert(i,"nop")
-        i+=1
+        
 
     temp_stage = cycle_stages[j]
     temp_stage[i] = "*"
     for i in range (nop_num):
         cycle_stages.insert(i,temp_stage)
-        i+=1
+        
 
     cycle_stages[  j + nop_num  ][i] = "ID"
-    if (cycle_stages[j + nop_num+1].size !=0)
-        cycle_stages[j + nop_num+1][i] = "IF";
+    if cycle_stages[j + nop_num+1].size !=0 :
+        cycle_stages[j + nop_num+1][i] = "IF"
 
-    return;
+    return
     
-         
+
+def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num) # Qiran Sun
+    global cycle_stages
+    if current_stage == 1: 
+        for k in range j:
+            cycle_stages[j].append(".")
+        cycle_stages[j].append("IF")
+        k=j+1
+        for k in range 16:
+            cycle_stages[j].append(".")
+        
+    
+    else if ( (cycle_stages[j][i - 1] == "*" and cycle_stages[j][i - 3] == "IF") or  (cycle_stages[j][i - 1] == "*" and  cycle_stages[j][i - 3] == "ID") ) :
+        cycle_stages[j][i] = "*"
+        return
+    
+    elif nop_num[j] > 0: 
+        cycle_stages[j][i] = cycle_stages[j][i - 1]
+        nop_num[j] -=1
+        return
+    
+    elif current_stage == 2 :
+        cycle_stages[j][i] = "ID"
+    
+    elif current_stage == 3 :
+        cycle_stages[j][i] = "EX"
+    
+    elif current_stage == 4 :
+        cycle_stages[j][i] = "MEM"
+    
+    elif current_stage == 5 and cycle_stages[j][i-1] != "*" :
+        cycle_stages[j][i] = "WB"
+    
+    return
+
+
+
