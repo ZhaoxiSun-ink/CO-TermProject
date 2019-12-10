@@ -30,11 +30,10 @@ def set_cycleStages(cycle_stages, i, j, current_stage):#Hongbo Zhao
             k += 1
         cycle_stages[j].append("IF");
         k = j + 1
-        while k < 16:
-            k += 1
+        for k in range(16):
             cycle_stages[j].append(".")
     elif cycle_stages[j][i] == "*":
-        pass
+        return
     elif current_stage == 2:
         cycle_stages[j][i] = "ID"
     elif current_stage == 3:
@@ -63,7 +62,7 @@ def getOperation(instruction, operation):#Hongbo Zhao
     index = 0
     while instruction[index] != ' ':
         index += 1
-    operation = instruction[0:index]
+    operation = instruction[0:index+1]
     if operation == "bne" or operation == "beq":
         return "J"
     else:
@@ -105,8 +104,7 @@ def read_instruction(instruction, destination,operand1,operand2,tt):#Zhaoxi Sun
             elif instruction[i-1] == "," and operand_count == 1:
                 destination = instruction[i:len(instruction)]
                
-def set_destinationStage(destination, current_stage):#Hongbo Zhao
-    global destinations
+def set_destinationStage(destination, current_stage, destinations):#Hongbo Zhao
     destinations[destination] = current_stage
 
 def initialize_register_file():#Mike Yang
@@ -167,11 +165,10 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
                 v0 = 1
             else:
                 v0 = 0
-    assert v0 != -1
     register_file[destination][1] = v0
     
 def put_b_in_a(destination, register_file):#Mike Yang
-    register_file[destination][1] = register_file[destination][1]# assumed dictionary of list for register file
+    register_file[destination][0] = register_file[destination][1]# assumed dictionary of list for register file
 
 def get_value(operand, register_file, operand_value):#Mike Yang
     operand_value = register_file[operand][1] #assumed as above
@@ -186,7 +183,7 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
     for i in range(count):
         print("%-20s"%cycle_instructions[i],end="")
         for j in range(16):
-            if i != 15:
+            if j != 15:
                 print("%-4s"%cycle_stages[i][j],end="")
             else:
                 print(cycle_stages[i][j])
@@ -212,7 +209,7 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
     print("$t9 =",register_file['t9'][0],'\n')
     print("----------------------------------------------------------------------------------\n")
    
-def add_star (cycle_stages,instruction_index,cycle):#Qiran Sun
+def add_stars (cycle_stages,instruction_index,cycle):#Qiran Sun
     cycle_stages[instruction_index][cycle] = "*"
 
 def get_nopNumber(operand1, operand2, destinations):# Qiran Sun
@@ -257,15 +254,17 @@ def insert_nop(nop_num, cycle_stages, cycle_instructions, j,  i): # Qiran Sun
         cycle_stages.insert(i,temp_stage)
         
 
-    cycle_stages[  j + nop_num  ][i] = "ID"
-    if cycle_stages[j + nop_num+1].size !=0 :
+    cycle_stages[j + nop_num][i] = "ID"
+    if len(cycle_stages[j + nop_num+1]) !=0 :
         cycle_stages[j + nop_num+1][i] = "IF"
 
-    return
     
 
 def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num): # Qiran Sun
-    if current_stage == 1: 
+    if nop_num[j] > 0:
+        cycle_stages[j][i] = cycle_stages[j][i - 1]
+        nop_num[j] -= 1
+    elif current_stage == 1: 
         for k in range(j):
             cycle_stages[j].append(".")
         cycle_stages[j].append("IF")
@@ -276,12 +275,6 @@ def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num): # 
     
     elif ( (cycle_stages[j][i - 1] == "*" and cycle_stages[j][i - 3] == "IF") or  (cycle_stages[j][i - 1] == "*" and  cycle_stages[j][i - 3] == "ID") ) :
         cycle_stages[j][i] = "*"
-        return
-    
-    elif nop_num[j] > 0: 
-        cycle_stages[j][i] = cycle_stages[j][i - 1]
-        nop_num[j] -=1
-        return
     
     elif current_stage == 2 :
         cycle_stages[j][i] = "ID"
@@ -295,7 +288,6 @@ def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num): # 
     elif current_stage == 5 and cycle_stages[j][i-1] != "*" :
         cycle_stages[j][i] = "WB"
     
-    return
 
 if __name__ == '__main__':#Hongbo Zhao
     arguments = sys.argv[1:]
