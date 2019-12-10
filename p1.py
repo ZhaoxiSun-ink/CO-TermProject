@@ -369,7 +369,13 @@ if __name__ == '__main__':#Hongbo Zhao
                             cycle_instructions.append(instructions[next_instruction_index])
                             next_instruction_index += 1
                 if current_stage == 5 and "*" in cycle_stages[j]:
-                    put_b_in_a(destination, register_file)         
+                    put_b_in_a(destination, register_file)
+                
+                if (j == len(cycle_instructions) - 1) and current_stage == 5:
+                    print_cycle(cycle_instructions, cycle_stages, register_file)
+                    print("END OF SIMULATION")
+            print_cycle(cycle_instructions, cycle_stages, register_file)
+    
                     
 
                 
