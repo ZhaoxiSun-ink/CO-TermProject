@@ -325,7 +325,7 @@ if __name__ == '__main__':#Hongbo Zhao
     for i in range(16):
         cycle_stages.append(temp)
         getInstructions(argv[2], instructions, branches)
-    if arguments[0] != "F":
+    if arguments[0] == "F":
         print("START OF SIMULATION (forwarding)")
         print("----------------------------------------------------------------------------------")
         
@@ -375,7 +375,7 @@ if __name__ == '__main__':#Hongbo Zhao
                     print_cycle(cycle_instructions, cycle_stages, register_file)
                     print("END OF SIMULATION")
             print_cycle(cycle_instructions, cycle_stages, register_file)
-    if arguments[0] != "N":
+    if arguments[0] == "N":
         print("START OF SIMULATION (no forwarding)")
         print("----------------------------------------------------------------------------------")
         
