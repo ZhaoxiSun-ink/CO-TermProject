@@ -182,7 +182,7 @@ def get_branchIndex(destination, branches, next_destination_index): #Mike Yang
     next_instruction_index = branches[destination]
 
 def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
-    print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
+    print("CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16")
     count = len(cycle_instructions)
     
     for i in range(count):
@@ -196,23 +196,23 @@ def print_cycle(cycle_instructions, cycle_stages, register_file):#Mike Yang
                 print(cycle_stages[i][j],'\n')
     print("\n")
   
-    print("$s0 =",register_file['s0'][0],'\t\t') # assumed as above
-    print("$s1 =",register_file['s1'][0],'\t\t')
-    print("$s2 =",register_file['s2'][0],'\t\t')
+    print("$s0 = %-14d"%register_file['s0'][0],end="") # assumed as above
+    print("$s1 = %-14d"%register_file['s1'][0],end="")
+    print("$s2 = %-14d"%register_file['s2'][0],end="")
     print("$s3 =",register_file['s3'][0],'\n')
-    print("$s4 =",register_file['s4'][0],'\t\t')
-    print("$s5 =",register_file['s5'][0],'\t\t')
-    print("$s6 =",register_file['s6'][0],'\t\t')
+    print("$s4 = %-14d"%register_file['s4'][0],end="")
+    print("$s5 = %-14d"%register_file['s5'][0],end="")
+    print("$s6 = %-14d"%register_file['s6'][0],end="")
     print("$s7 =",register_file['s7'][0],'\n')
-    print("$t0 =",register_file['t0'][0],'\t\t')
-    print("$t1 =",register_file['t1'][0],'\t\t')
-    print("$t2 =",register_file['t2'][0],'\t\t')
+    print("$t0 = %-14d"%register_file['t0'][0],end="")
+    print("$t1 = %-14d"%register_file['t1'][0],end="")
+    print("$t2 = %-14d"%register_file['t2'][0],end="")
     print("$t3 =",register_file['t3'][0],'\n')
-    print("$t4 =",register_file['t4'][0],'\t\t')
-    print("$t5 =",register_file['t5'][0],'\t\t')
-    print("$t6 =",register_file['t6'][0],'\t\t')
+    print("$t4 = %-14d"%register_file['t4'][0],end="")
+    print("$t5 = %-14d"%register_file['t5'][0],end="")
+    print("$t6 = %-14d"%register_file['t6'][0],end="")
     print("$t7 =",register_file['t7'][0],'\n')
-    print("$t8 =",register_file['t8'][0],'\t\t')
+    print("$t8 = %-14d"%register_file['t8'][0],end="")
     print("$t9 =",register_file['t9'][0],'\n')
     print("----------------------------------------------------------------------------------\n")
    
