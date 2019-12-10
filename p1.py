@@ -375,8 +375,93 @@ if __name__ == '__main__':#Hongbo Zhao
                     print_cycle(cycle_instructions, cycle_stages, register_file)
                     print("END OF SIMULATION")
             print_cycle(cycle_instructions, cycle_stages, register_file)
-    
-                    
-
+    if arguments[0] != "N":
+        print("START OF SIMULATION (no forwarding)")
+        print("----------------------------------------------------------------------------------")
+        
+        next_instruction_index = 0
+        nops_number = []
+        for i in range(16):
+            nops_number.append(0)
+        for i in range(16):
+            for j in range(len(cycle_instructions)+1):
+                if j == i:
+                    if len(cycle_instructions) != j + 1:
+                        if next_instruction_index >= len(instructions):
+                            break
+                        
+                        instruction_type = getOperation(instructions[next_instruction_index],operation)
+                        if instruction_type == "branch":
+                            next_instruction_index += 1
+                            
+                        cycle_instructions.append(instructions[next_instruction_index])
+                        next_instruction_index += 1
+                if j == len(cycle_instructions):
+                    break
                 
-
+                current_instruction = cycle_instructions[j]
+                current_stage = i - j + 1
+                
+                instruction_type = getOperation(current_instruction,operation)
+                
+                if instruction_type != "nop":
+                    set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
+                    
+                        
+                elif instruction_type !="J":
+                    read_instruction(current_instruction, destination, operand1, operand2, 'N')
+                    set_destinationStage(destination, current_stage, destinations)
+                    if current_stage == 3:
+                        nop = get_nopNumber(operand1, operand2, destinations)
+                        if nop:
+                            if nop == 2:
+                                insert_nop(nop, cycle_stages, cycle_instructions, j, i)
+                                j += 2
+                                nops_number[j] = 1
+                                nops_number[j+1] = 1
+                                break
+                            if nop == 1:
+                                insert_nop(nop, cycle_stages, cycle_instructions, j, i)
+                                j += 1
+                                break
+                        set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
+                        
+                    elif current_stage == 5:
+                        update_registerFile(operation, destination, operand1, operand2, register_file)
+                        put_b_in_a(destination, register_file)
+                        set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
+                    else:
+                        set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
+                        
+                elif instruction_type == "J":
+                    read_instruction(current_instruction, destination, operand1, operand2, 'J')
+                    set_destinationStage(destination, current_stage, destinations)
+                    if current_stage == 3:
+                        nop = get_nopNumber(operand1, operand2, destinations)
+                        if nop:
+                            if nop == 2:
+                                insert_nop(nop, cycle_stages, cycle_instructions, j, i)
+                                j += 2
+                                nops_number[j] = 1
+                                nops_number[j+1] = 1
+                            if nop == 1:
+                                insert_nop(nop, cycle_stages, cycle_instructions, j, i)
+                                j += 1
+                        else:
+                            set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
+                    elif current_stage == 5:
+                        set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
+                        get_value(operand1, register_file, operand1_value)
+                        get_value(operand2, register_file, operand2_value)
+                        if (operation == "beq" and operand1_value == operand2_value) or (operation == "bne" and operand1_value != operand2_value):
+                            get_branchIndex(destination, branches, next_instruction_index)
+                            cycle_instructions.push_back(instructions[next_instruction_index])
+                            next_instruction_index += 1
+                            set_cycleStages(cycle_stages, i, j + 4, 1)  
+                    elif i != j:
+                        set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
+                if (j == len(cycle_instructions)-1) and current_stage == 5:
+                    print_cycle(cycle_instructions, cycle_stages, register_file)
+                    print("END OF SIMULATION")
+            print_cycle(cycle_instructions, cycle_stages, register_file)
+    print("END OF SIMULATION")
