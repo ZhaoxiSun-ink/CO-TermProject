@@ -56,17 +56,19 @@ def getOperation(instruction, operation):#Hongbo Zhao
     lenInst = len(instruction)
 
     if instruction[lenInst-1] == ':':
-        return "branch"
+        return "branch",operation
     if instruction == "nop":
-        return "nop"
+        return "nop",operation
     index = 0
     while instruction[index] != ' ':
         index += 1
+    
     operation = instruction[0:index+1]
+    #print(operation, '++++++++++++++++')
     if operation == "bne" or operation == "beq":
-        return "J"
+        return "J",operation
     else:
-        return "I"
+        return "I",operation
 
     
 def read_instruction(instruction, destination,operand1,operand2,tt):#Zhaoxi Sun
@@ -135,10 +137,15 @@ def initialize_register_file():#Mike Yang
     
 def update_registerFile(operation, destination, operand1, operand2, register_file):#Mike Yang
     v0 = 0
+    
     if operand1 == "zero":
         v1 = 0
     else:
         v1 = register_file[operand1][1]
+    
+    if operation[-1] == " ":
+        operation = operation[:-1]
+    #print(operation, "adaaaaaaaa")
     if operation == "add" or operation == "and" or operation == "or" or operation == "slt":
         v2 = register_file[operand2][1]
         if operation == "add":
@@ -153,6 +160,7 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
             else:
                 v0 = 0
     else:
+        #print(operand2)
         v2 = int(operand2)
         if operation== 'addi':
             v0 = v1 + v2
@@ -320,7 +328,7 @@ if __name__ == '__main__':#Hongbo Zhao
                         if next_instruction_index >= len(instructions):
                             break
                         
-                        instruction_type = getOperation(instructions[next_instruction_index],operation)
+                        instruction_type, operation = getOperation(instructions[next_instruction_index],operation)
                         if instruction_type == "branch":
                             next_instruction_index += 1
                             
@@ -333,7 +341,7 @@ if __name__ == '__main__':#Hongbo Zhao
                 current_stage = i - j + 1
                 set_cycleStages(cycle_stages, i, j, current_stage)
                 
-                instruction_type = getOperation(current_instruction,operation)
+                instruction_type, operation = getOperation(current_instruction,operation)
                 destination = ""
                 operand1 = ""
                 operand2 = ""
@@ -392,7 +400,7 @@ if __name__ == '__main__':#Hongbo Zhao
                         if next_instruction_index >= len(instructions):
                             break
                         
-                        instruction_type = getOperation(instructions[next_instruction_index],operation)
+                        instruction_type,operation = getOperation(instructions[next_instruction_index],operation)
                         if instruction_type == "branch":
                             next_instruction_index += 1
                             
@@ -404,7 +412,7 @@ if __name__ == '__main__':#Hongbo Zhao
                 current_instruction = cycle_instructions[j]
                 current_stage = i - j + 1
                 
-                instruction_type = getOperation(current_instruction,operation)
+                instruction_type, operation = getOperation(current_instruction,operation)
                 destination = ""
                 operand1 = ""
                 operand2 = ""
