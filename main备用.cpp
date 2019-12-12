@@ -94,7 +94,9 @@ std::string get_Operation(string instruction, string &operation){
 
     int index = 0;
     // Get the length of operation
-    while (instruction[index] != ' ') index++;
+    while (instruction[index] != ' '){ 
+        index++;
+    }
     
     operation = instruction.substr(0, index);
     
@@ -111,7 +113,8 @@ void read_instruction(const string instruction, string &destination, string &ope
     // If not J type
     if (type == 'N') {
         int operand_count = 0;
-        for (int i = 0; i < instruction.length(); i++) {
+        int i = 0;
+        while (i < instruction.length()) {
             if (instruction[i] == '$') {
                 // If operand_count is 0, then it is the destination
                 if (operand_count == 0) {
@@ -140,12 +143,14 @@ void read_instruction(const string instruction, string &destination, string &ope
                     operand2 = instruction.substr(i + 1, instruction.length() - i - 1);
                 }
             }
+            i++;
         }
     }
     // If J type
     else if (type == 'J') {
         int operand_count = 0;
-        for (int i = 0; i < instruction.length(); i++) {
+        int i = 0;
+        while(i < instruction.length()) {
             if (instruction[i] == '$') {
                 if (operand_count == 0) {
                     operand_count++;
@@ -162,6 +167,7 @@ void read_instruction(const string instruction, string &destination, string &ope
                 destination = instruction.substr(i, len);
             }
         }
+        i++;
     }
 }
 
