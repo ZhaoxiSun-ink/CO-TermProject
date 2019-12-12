@@ -108,7 +108,8 @@ void read_instruction(const string instruction, string & destination, string & o
 	// If not J type
 	if (type == 'N') {
 		int operand_count = 0;
-		for (int i = 0; i < (int)instruction.length(); i++) {
+		int i=0;
+		while (i < (int)instruction.length()) {
 			if (instruction[i] == '$') {
 				// If operand_count is 0, then it is the destination
 				if (operand_count == 0) {
@@ -137,12 +138,14 @@ void read_instruction(const string instruction, string & destination, string & o
 					operand2 = instruction.substr(i + 1, instruction.length() - i - 1);
 				}
 			}
+			i++;
 		}
 	}
 	// If J type
 	else if (type == 'J') {
 		int operand_count = 0;
-		for (int i = 0; i < (int)instruction.length(); i++) {
+		int i = 0;
+		while (i < (int)instruction.length()) {
 			if (instruction[i] == '$') {
 				if (operand_count == 0) {
 					operand_count++;
@@ -159,6 +162,7 @@ void read_instruction(const string instruction, string & destination, string & o
 				destination = instruction.substr(i, len);
 			}
 		}
+		i++;
 	}
 }
 
