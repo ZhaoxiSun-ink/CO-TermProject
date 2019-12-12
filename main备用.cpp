@@ -1,11 +1,3 @@
-//
-//  main.cpp
-//  co_project
-//
-//  Created by 宋初文 on 12/9/18.
-//  Copyright © 2018 宋初文. All rights reserved.
-//
-
 #include <iostream>
 #include <vector>
 #include <string>
