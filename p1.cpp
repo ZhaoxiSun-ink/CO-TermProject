@@ -26,34 +26,35 @@ void cyclestage(int i, int j, vector<vector<string>>& cycleStages, int stageCurr
 	else if (cycleStages[j][i].compare("*") == 0) {
 		return;
 	}
-	else {
-
-		switch (stageCurr) {
-		case 2:
-			cycleStages[j][i] = "ID";
-		case 3:
-			if (cycleStages[j][i - 1] != "*") {
-				cycleStages[j][i] = "EX";
-			}
-			else {
-				cycleStages[j][i] = "*";
-			}
-		case 4:
-			if (cycleStages[j][i - 1] != "*") {
-				cycleStages[j][i] = "MEM";
-			}
-			else {
-				cycleStages[j][i] = "*";
-			}
-		case 5:
-			if (cycleStages[j][i - 1] != "*") {
-				cycleStages[j][i] = "WB";
-			}
-			else {
-				cycleStages[j][i] = "*";
-			}
+	else if (stageCurr == 2) {
+		cycleStages[j][i] = "ID";
+	}
+	else if (stageCurr == 3) {
+		if (cycleStages[j][i - 1] == "*") {
+			cycleStages[j][i] = "*";
+		}
+		else {
+			cycleStages[j][i] = "EX";
 		}
 	}
+	else if (stageCurr == 4) {
+		if (cycleStages[j][i - 1] == "*") {
+			cycleStages[j][i] = "*";
+		}
+		else {
+			cycleStages[j][i] = "MEM";
+		}
+	}
+	else if (stageCurr == 5) {
+		if (cycleStages[j][i - 1] == "*") {
+			cycleStages[j][i] = "*";
+		}
+		else {
+			cycleStages[j][i] = "WB";
+		}
+	}
+
+	return;
 }
 
 void cycleStageN(int i, int j, int stageCurr, vector<vector<string> >& cycleStages, vector<int>& nopNum) {
@@ -77,19 +78,34 @@ void cycleStageN(int i, int j, int stageCurr, vector<vector<string> >& cycleStag
 	else if ((cycleStages[j][i - 1].compare("*") == 0 && cycleStages[j][i - 3].compare("IF") == 0) or (cycleStages[j][i - 1].compare("*") == 0 && cycleStages[j][i - 3].compare("ID") == 0)) {
 		cycleStages[j][i] = "*";
 	}
-	else if (stageCurr == 5 and cycleStages[j][i - 1] != "*") {
-		cycleStages[j][i] = "WB";
+	else if (stageCurr == 2) {
+		cycleStages[j][i] = "ID";
 	}
-	else {
-		switch (stageCurr) {
-		case 2:
-			cycleStages[j][i] = "ID";
-		case 3:
+	else if (stageCurr == 3) {
+		if (cycleStages[j][i - 1] == "*") {
+			cycleStages[j][i] = "*";
+		}
+		else {
 			cycleStages[j][i] = "EX";
-		case 4:
+		}
+	}
+	else if (stageCurr == 4) {
+		if (cycleStages[j][i - 1] == "*") {
+			cycleStages[j][i] = "*";
+		}
+		else {
 			cycleStages[j][i] = "MEM";
 		}
 	}
+	else if (stageCurr == 5) {
+		if (cycleStages[j][i - 1] == "*") {
+			cycleStages[j][i] = "*";
+		}
+		else {
+			cycleStages[j][i] = "WB";
+		}
+	}
+
 }
 
 int calculatev0(int v1, int v2, std::string operater) {
