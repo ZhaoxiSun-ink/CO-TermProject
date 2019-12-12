@@ -23,12 +23,16 @@ void set_cycleStages(vector<vector<string> > &cycle_stages, int i, int j, int cu
     
     
     if (current_stage == 1) {
-        for (int k = 0; k < j; k++) {
+        int m =0;
+        while(m<j){
             cycle_stages[j].push_back(".");
+            m++;
         }
         cycle_stages[j].push_back("IF");
-        for (int k = j + 1; k < 16; k++) {
+        int n = j+1;
+        while(n<16){
             cycle_stages[j].push_back(".");
+            n++;
         }
     }
     // If there is * in current stage, then no need to change anything
@@ -75,7 +79,7 @@ void set_cycleStages(vector<vector<string> > &cycle_stages, int i, int j, int cu
 
 
 
-std::string getOperation(string instruction, string &operation){
+std::string get_Operation(string instruction, string &operation){
     // Get the length of this instruction
     int len = instruction.length();
     
@@ -464,7 +468,7 @@ int main(int argc, const char * argv[]) {
                         if (next_instruction_index>= instructions.size()){
                             break;
                         }
-                        instruction_type = getOperation(instructions[next_instruction_index],operation);
+                        instruction_type = get_Operation(instructions[next_instruction_index],operation);
 
                         if (instruction_type == "branch"){//skip lable
                             next_instruction_index++;
@@ -485,7 +489,7 @@ int main(int argc, const char * argv[]) {
                
                 //get operation
                 
-                instruction_type = getOperation(current_instruction,operation);
+                instruction_type = get_Operation(current_instruction,operation);
                 std::string destination;
                 std::string operand1;
                 std::string operand2;
@@ -561,7 +565,7 @@ int main(int argc, const char * argv[]) {
                         if (next_instruction_index>= instructions.size()){
                             break;
                         }
-                        instruction_type = getOperation(instructions[next_instruction_index],operation);
+                        instruction_type = get_Operation(instructions[next_instruction_index],operation);
                         if (instruction_type == "branch"){//skip lable
                             next_instruction_index++;
                         }
@@ -583,7 +587,7 @@ int main(int argc, const char * argv[]) {
                 
                 //get operation
                 
-                instruction_type = getOperation(current_instruction,operation);
+                instruction_type = get_Operation(current_instruction,operation);
                 std::string destination;
                 std::string operand1;
                 std::string operand2;
