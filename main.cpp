@@ -86,17 +86,18 @@ std::string getOperation(string instruction, string& operation) {
 }
 
 
-void readInstruction(const string instruction, string & target, string & reg1, string & reg2, char type) {
+void readInstruction(string& target, const string instruction, string & reg1, string & reg2, char type) {
 	if (type == 'N') {
 		int regCount = 0;
-		for (int i = 0; i < (int)instruction.length(); i++) {
+		int i = 0;
+		while (i < instruction.length()) {
 			if (instruction[i] == '$') {
-				if (regCount == 0) {
+				switch (regCount) {
+				case 0:
 					regCount++;
 					target = instruction.substr(i+1, 2);
-				}
-				else if (regCount == 1) {
-					if (instruction.substr(i+1,4).compare("zero") == 0) {
+				case 1:
+					if (instruction.substr(i+1, 4).compare("zero") == 0) {
 						reg1 = instruction.substr(i+1, 4);
 					}
 					else {
@@ -105,25 +106,27 @@ void readInstruction(const string instruction, string & target, string & reg1, s
 					regCount++;
 				}
 			}
-			else if (instruction[i] == ',' && regCount == 2) {
-				if (instruction[ +1] == '$') {
+			if (instruction[i] == ',' and regCount == 2) {
+				if (instruction[i+1] == '$') {
 					reg2 = instruction.substr(i+2, 2);
 				}
 				else {
 					reg2 = instruction.substr(i+1, instruction.length() - i - 1);
 				}
 			}
+			i++;
 		}
 	}
-	else if (type == 'J') {
+	if (type == 'J') {
 		int regCount = 0;
-		for (int i = 0; i < (int)instruction.length(); i++) {
+		int i = 0;
+		while (i < instruction.length()) {
 			if (instruction[i] == '$') {
-				if (regCount == 0) {
+				switch (regCount) {
+				case 0:
 					regCount++;
 					reg1 = instruction.substr(i+1, 2);
-				}
-				else if (regCount == 1) {
+				case 1:
 					reg2 = instruction.substr(i+1, 2);
 				}
 			}
@@ -131,6 +134,7 @@ void readInstruction(const string instruction, string & target, string & reg1, s
 				int len = instruction.length() - i;
 				target = instruction.substr(i, len);
 			}
+			i++;
 		}
 	}
 }
@@ -234,25 +238,25 @@ void printOut(std::vector<std::string> const& cycleInstru, std::vector<std::vect
 	cout << "----------------------------------------------------------------------------------\n";
 }
 
-int get_nopNumber(std::string reg1, std::string reg2, map<string, int> targets) {
-	int tmp;
-	map<string, int>::iterator it1, it2;
-	it1 = targets.find(reg1);
-	it2 = targets.find(reg2);
-	if (it1 != targets.end() && it2 != targets.end()) {
-		tmp = min(targets[reg1], targets[reg2]);
-		if (tmp > 6)  return 0;
-		else return 6 - tmp;
+int getNop(std::string reg1, std::string reg2, map<string, int> targets) {
+	int tp;
+	map<string, int>::iterator i1, i2;
+	i1 = targets.find(reg1);
+	i2 = targets.find(reg2);
+	if (i1 != targets.end() and i2 != targets.end()) {
+		tp = min(targets[reg1], targets[reg2]);
+		if (tp > 6)  return 0;
+		else return 6 - tp;
 	}
-	else if (it1 != targets.end()) {
-		tmp = targets[reg1];
-		if (tmp > 6)  return 0;
-		else return 6 - tmp;
+	else if (i1 != targets.end()) {
+		tp = targets[reg1];
+		if (tp > 6)  return 0;
+		else return 6 - tp;
 	}
-	else if (it2 != targets.end()) {
-		tmp = targets[reg2];
-		if (tmp > 6) return 0;
-		else  return 6 - tmp;
+	else if (i2 != targets.end()) {
+		tp = targets[reg2];
+		if (tp > 6) return 0;
+		else  return 6 - tp;
 	}
 	else  return 0;
 }
@@ -390,14 +394,14 @@ int main(int argc, const char* argv[]) {
 				std::string operand2;
 
 				if (instruction_type.compare("J") != 0) {
-					readInstruction(current_instruction, destination, operand1, operand2, 'N');
+					readInstruction(destination, current_instruction, operand1, operand2, 'N');
 					if (current_stage == 3) {
 						updateReg(operation, destination, operand1, operand2, register_file);
 					}
 
 				}
 				if (instruction_type.compare("J") == 0) {
-					readInstruction(current_instruction, destination, operand1, operand2, 'J');
+					readInstruction(destination, current_instruction, operand1, operand2, 'J');
 					if (current_stage == 5) {
 
 						int operand1_value;
@@ -480,10 +484,10 @@ int main(int argc, const char* argv[]) {
 					cycleStageN(cycle_stages, i, j, current_stage, nops_number);
 				}
 				else if (instruction_type.compare("J") != 0) {
-					readInstruction(current_instruction, destination, operand1, operand2, 'N');
+					readInstruction(destination, current_instruction, operand1, operand2, 'N');
 					destinations[destination] = current_stage;
 					if (current_stage == 3) {
-						int nop = get_nopNumber(operand1, operand2, destinations);
+						int nop = getNop(operand1, operand2, destinations);
 						if (nop) {
 							if (nop == 2) {
 								cycle_instructions.insert(cycle_instructions.begin() + j, nop, "nop");
@@ -530,11 +534,11 @@ int main(int argc, const char* argv[]) {
 
 				}
 				else if (instruction_type.compare("J") == 0) {
-					readInstruction(current_instruction, destination, operand1, operand2, 'J');
+					readInstruction(destination, current_instruction, operand1, operand2, 'J');
 					destinations[destination] = current_stage;
 
 					if (current_stage == 3) {
-						int nop = get_nopNumber(operand1, operand2, destinations);
+						int nop = getNop(operand1, operand2, destinations);
 						if (nop) {
 							if (nop == 2) {
 								cycle_instructions.insert(cycle_instructions.begin() + j, nop, "nop");
