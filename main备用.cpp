@@ -158,8 +158,8 @@ void read_instruction(const string instruction, string &destination, string &ope
                 int len = instruction.length() - i;
                 destination = instruction.substr(i, len);
             }
+            i++;
         }
-        i++;
     }
 }
 
