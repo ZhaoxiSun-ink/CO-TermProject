@@ -23,7 +23,7 @@ void cyclestage(vector<vector<string>>& cycleStages, int i, int j, int stageCurr
 			k++;
 		}
 	}
-	else if (cycleStages[j][i] == "*") {
+	else if (cycleStages[j][i].compare("*") == 0) {
 		return;
 	}
 	else {
@@ -32,21 +32,21 @@ void cyclestage(vector<vector<string>>& cycleStages, int i, int j, int stageCurr
 		case 2:
 			cycleStages[j][i] = "ID";
 		case 3:
-			if (cycleStages[j][i-1] != "*") {
+			if (cycleStages[j][i - 1] != "*") {
 				cycleStages[j][i] = "EX";
 			}
 			else {
 				cycleStages[j][i] = "*";
 			}
 		case 4:
-			if (cycleStages[j][i-1] != "*") {
+			if (cycleStages[j][i - 1] != "*") {
 				cycleStages[j][i] = "MEM";
 			}
 			else {
 				cycleStages[j][i] = "*";
 			}
 		case 5:
-			if (cycleStages[j][i-1] != "*") {
+			if (cycleStages[j][i - 1] != "*") {
 				cycleStages[j][i] = "WB";
 			}
 			else {
@@ -56,12 +56,25 @@ void cyclestage(vector<vector<string>>& cycleStages, int i, int j, int stageCurr
 	}
 }
 
-
+int calculatev0(int v1, int v2, std::string operater) {
+	if (operater.compare("add") == 0 or operater.compare("addi") == 0) {
+		return v1 + v2;
+	}
+	else if (operater.compare("and") == 0 or operater.compare("andi") == 0) {
+		return v1 & v2;
+	}
+	else if (operater.compare("or") == 0 or operater.compare("ori") == 0) {
+		return v1 ^ v2;
+	}
+	else if (operater.compare("slt") == 0 or operater.compare("slti") == 0) {
+		return (v1 < v2) ? 1 : 0;
+	}
+}
 
 //Mike Yang 
 std::string getOperation(string instruction, string& operation) {
 	int len = instruction.length();
-	if (instruction[len-1] == ':') {
+	if (instruction[len - 1] == ':') {
 		return "branch";
 	}
 
@@ -86,7 +99,7 @@ std::string getOperation(string instruction, string& operation) {
 }
 
 
-void readInstruction(string& target, const string instruction, string & reg1, string & reg2, char type) {
+void readInstruction(string& target, const string instruction, string& reg1, string& reg2, char type) {
 	if (type == 'N') {
 		int regCount = 0;
 		int i = 0;
@@ -95,23 +108,23 @@ void readInstruction(string& target, const string instruction, string & reg1, st
 				switch (regCount) {
 				case 0:
 					regCount++;
-					target = instruction.substr(i+1, 2);
+					target = instruction.substr(i + 1, 2);
 				case 1:
-					if (instruction.substr(i+1, 4).compare("zero") == 0) {
-						reg1 = instruction.substr(i+1, 4);
+					if (instruction.substr(i + 1, 4).compare("zero") == 0) {
+						reg1 = instruction.substr(i + 1, 4);
 					}
 					else {
-						reg1 = instruction.substr(i+1, 2);
+						reg1 = instruction.substr(i + 1, 2);
 					}
 					regCount++;
 				}
 			}
 			if (instruction[i] == ',' and regCount == 2) {
-				if (instruction[i+1] == '$') {
-					reg2 = instruction.substr(i+2, 2);
+				if (instruction[i + 1] == '$') {
+					reg2 = instruction.substr(i + 2, 2);
 				}
 				else {
-					reg2 = instruction.substr(i+1, instruction.length() - i - 1);
+					reg2 = instruction.substr(i + 1, instruction.length() - i - 1);
 				}
 			}
 			i++;
@@ -125,12 +138,12 @@ void readInstruction(string& target, const string instruction, string & reg1, st
 				switch (regCount) {
 				case 0:
 					regCount++;
-					reg1 = instruction.substr(i+1, 2);
+					reg1 = instruction.substr(i + 1, 2);
 				case 1:
-					reg2 = instruction.substr(i+1, 2);
+					reg2 = instruction.substr(i + 1, 2);
 				}
 			}
-			if (regCount == 1 and instruction[i-1] == ',') {
+			if (regCount == 1 and instruction[i - 1] == ',') {
 				int len = instruction.length() - i;
 				target = instruction.substr(i, len);
 			}
@@ -138,7 +151,6 @@ void readInstruction(string& target, const string instruction, string & reg1, st
 		}
 	}
 }
-
 
 void updateReg(std::string operater, std::string target, std::string reg1, std::string reg2,
 	std::map<std::string, std::pair<int, int> > & registers) {
@@ -150,52 +162,20 @@ void updateReg(std::string operater, std::string target, std::string reg1, std::
 	else {
 		v1 = registers[reg1].second;
 	}
-	std::vector<string> operationStr = {"add", "and", "or", "slt"};
+	std::vector<string> operationStr = { "add", "and", "or", "slt" };
 	if (std::find(operationStr.begin(), operationStr.end(), operater) != operationStr.end()) {
 		v2 = registers[reg2].second;
-		if (operater == "add") {
-			v0 = v1 + v2;
-		}
-		else if (operater == "and") {
-			v0 = v1 & v2;
-		}
-		else if (operater == "or") {
-			v0 = v1 ^ v2;
-		}
-		else if (operater == "slt") {
-			if (v1 < v2) {
-				v0 = 1;
-			}
-			else {
-				v0 = 0;
-			}
-		}
+		v0 = calculatev0(v1, v2, operater);
 	}
 	else {
 		v2 = stoi(reg2);
-		if (operater == "addi") {
-			v0 = v1 + v2;
-		}
-		else if (operater == "andi") {
-			v0 = v1 & v2;
-		}
-		else if (operater == "ori") {
-			v0 = v1 ^ v2;
-		}
-		else if (operater == "slti") {
-			if (v1 < v2) {
-				v0 = 1;
-			}
-			else {
-				v0 = 0;
-			}
-		}
+		v0 = calculatev0(v1, v2, operater);
 	}
 	registers[target].second = v0;
 }
 
 
-void printOut(std::vector<std::string> const& cycleInstru, std::vector<std::vector<std::string> > const& cycleStages,
+void printOut(std::vector<std::vector<std::string> > const& cycleStages, std::vector<std::string> const& cycleInstru,
 	std::map<std::string, std::pair<int, int> > registers)
 {
 	std::cout << "CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16" << std::endl;
@@ -238,27 +218,24 @@ void printOut(std::vector<std::string> const& cycleInstru, std::vector<std::vect
 	cout << "----------------------------------------------------------------------------------\n";
 }
 
-int getNop(std::string reg1, std::string reg2, map<string, int> targets) {
+int getNop(map<string, int> targets, std::string reg1, std::string reg2) {
 	int tp;
-	map<string, int>::iterator i1, i2;
-	i1 = targets.find(reg1);
-	i2 = targets.find(reg2);
-	if (i1 != targets.end() and i2 != targets.end()) {
+
+	bool t1 = targets.find(reg1) != targets.end();
+	bool t2 = targets.find(reg2) != targets.end();
+	if (t1 and t2) {
 		tp = min(targets[reg1], targets[reg2]);
-		if (tp > 6)  return 0;
-		else return 6 - tp;
+		return max(6 - tp, 0);
 	}
-	else if (i1 != targets.end()) {
+	else if (t1) {
 		tp = targets[reg1];
-		if (tp > 6)  return 0;
-		else return 6 - tp;
+		return max(6 - tp, 0);
 	}
-	else if (i2 != targets.end()) {
+	else if (t2) {
 		tp = targets[reg2];
-		if (tp > 6) return 0;
-		else  return 6 - tp;
+		return max(6 - tp, 0);
 	}
-	else  return 0;
+	else return 0;
 }
 
 
@@ -266,7 +243,7 @@ int getNop(std::string reg1, std::string reg2, map<string, int> targets) {
 
 void cycleStageN(vector<vector<string> > & cycleStages, int i, int j, int stageCurr, vector<int> & nopNum) {
 	if (nopNum[j] > 0) {
-		cycleStages[j][i] = cycleStages[j][i-1];
+		cycleStages[j][i] = cycleStages[j][i - 1];
 		nopNum[j]--;
 	}
 	else if (stageCurr == 1) {
@@ -282,10 +259,10 @@ void cycleStageN(vector<vector<string> > & cycleStages, int i, int j, int stageC
 			k++;
 		}
 	}
-	else if ((cycleStages[j][i-1].compare("*") == 0 and cycleStages[j][i-3].compare("IF") == 0) or cycleStages[j][i-1].compare("*") == 0 and cycleStages[j][i - 3].compare("ID") == 0) {
+	else if ((cycleStages[j][i - 1].compare("*") == 0 and cycleStages[j][i - 3].compare("IF") == 0) or cycleStages[j][i - 1].compare("*") == 0 and cycleStages[j][i - 3].compare("ID") == 0) {
 		cycleStages[j][i] = "*";
 	}
-	else if (stageCurr == 5 and cycleStages[j][i-1] != "*") {
+	else if (stageCurr == 5 and cycleStages[j][i - 1] != "*") {
 		cycleStages[j][i] = "WB";
 	}
 	else {
@@ -303,303 +280,292 @@ void cycleStageN(vector<vector<string> > & cycleStages, int i, int j, int stageC
 
 int main(int argc, const char* argv[]) {
 
-	//initalize
-	std::vector<std::string> instructions;
-	std::map<std::string, int> branches;
-	std::map<std::string, int> destinations;
-	std::map<std::string, std::pair<int, int> > register_file;
-	register_file["s0"] = make_pair(0, 0);
-	register_file["s1"] = make_pair(0, 0);
-	register_file["s2"] = make_pair(0, 0);
-	register_file["s3"] = make_pair(0, 0);
-	register_file["s4"] = make_pair(0, 0);
-	register_file["s5"] = make_pair(0, 0);
-	register_file["s6"] = make_pair(0, 0);
-	register_file["s7"] = make_pair(0, 0);
-	register_file["t0"] = make_pair(0, 0);
-	register_file["t1"] = make_pair(0, 0);
-	register_file["t2"] = make_pair(0, 0);
-	register_file["t3"] = make_pair(0, 0);
-	register_file["t4"] = make_pair(0, 0);
-	register_file["t5"] = make_pair(0, 0);
-	register_file["t6"] = make_pair(0, 0);
-	register_file["t7"] = make_pair(0, 0);
-	register_file["t8"] = make_pair(0, 0);
-	register_file["t9"] = make_pair(0, 0);
+	std::map<std::string, std::pair<int, int> > registers;
+	registers["s0"] = make_pair(0, 0);
+	registers["s1"] = make_pair(0, 0);
+	registers["s2"] = make_pair(0, 0);
+	registers["s3"] = make_pair(0, 0);
+	registers["s4"] = make_pair(0, 0);
+	registers["s5"] = make_pair(0, 0);
+	registers["s6"] = make_pair(0, 0);
+	registers["s7"] = make_pair(0, 0);
+	registers["t0"] = make_pair(0, 0);
+	registers["t1"] = make_pair(0, 0);
+	registers["t2"] = make_pair(0, 0);
+	registers["t3"] = make_pair(0, 0);
+	registers["t4"] = make_pair(0, 0);
+	registers["t5"] = make_pair(0, 0);
+	registers["t6"] = make_pair(0, 0);
+	registers["t7"] = make_pair(0, 0);
+	registers["t8"] = make_pair(0, 0);
+	registers["t9"] = make_pair(0, 0);
 
+	std::vector<std::string> allInstru;
+	std::map<std::string, int> allBranch;
+	std::map<std::string, int> targets;
+	std::vector<std::string> cycleInstru;
+	std::vector<std::vector<std::string> > cycleStages;
+	vector<string> tmp;
 
-	std::vector<std::string> cycle_instructions;
-	std::vector<std::vector<std::string> > cycle_stages;
-	vector<string> temp;
-	//Hongbo Zhao--whileloop
 	int i = 0;
 	while (i < 16) {
-		cycle_stages.push_back(temp);
+		cycleStages.push_back(tmp);
 		i++;
 	}
-	//read instructions into vector
-	//getInstructions(argv[2], instructions, branches);
-	ifstream myfile;
-	myfile.open(argv[2]);
+
+	ifstream infile;
+	infile.open(argv[2]);
 
 	string instruction;
-	int line_num = 0;
-	while (getline(myfile, instruction)) {
-		line_num++;
-		instructions.push_back(instruction);
-		// Check if this is a branch label by checking the last char
+	int lineNum = 0;
+	while (getline(infile, instruction)) {
+		lineNum++;
+		allInstru.push_back(instruction);
 		int len = instruction.length();
-		if (instruction[len - 1] == ':') {
-			// Get the branch name
-			string branch_name = instruction.substr(0, len - 1);
-			// The branch starts from the next line
-			branches[branch_name] = line_num;
+		if (instruction[len-1] == ':') {
+			string branch = instruction.substr(0, len-1);
+			allBranch[branch] = lineNum;
 		}
 	}
-	//Hongbo Zhao
 	if (string(argv[1]).compare("F") == 0) {
 		cout << "START OF SIMULATION (forwarding)" << endl << "----------------------------------------------------------------------------------" << endl;
-		int next_instruction_index = 0;
+		int nextInstru = 0;
 		int i = 0;
 		while (i < 16) {
 			int j = 0;
-			while (j <= (int)cycle_instructions.size()) {
-				std::string current_instruction;
+			while (j <= cycleInstru.size()) {
+				std::string instruCurr;
 				std::string operation;
-				std::string instruction_type;
+				std::string instruType;
 				if (j == i) {
-					if ((int)cycle_instructions.size() != j + 1) {
-						if (next_instruction_index >= (int)instructions.size()) {
+					if (cycleInstru.size() != j + 1) {
+						if (nextInstru >= allInstru.size()) {
 							break;
 						}
-						instruction_type = getOperation(instructions[next_instruction_index], operation);
-						if (instruction_type.compare("branch") == 0) {
-							next_instruction_index++;
+						instruType = getOperation(allInstru[nextInstru], operation);
+						if (instruType.compare("branch") == 0) {
+							nextInstru++;
 						}
-						cycle_instructions.push_back(instructions[next_instruction_index]);
-						next_instruction_index++;
+						cycleInstru.push_back(allInstru[nextInstru]);
+						nextInstru++;
 					}
 				}
-				if (j == (int)cycle_instructions.size()) {
+				if (j == cycleInstru.size()) {
 					break;
 				}
-				current_instruction = cycle_instructions[j];
-				int current_stage;
-				current_stage = i - j + 1;
-				cyclestage(cycle_stages, i, j, current_stage);
+				instruCurr = cycleInstru[j];
+				int stageCurr;
+				stageCurr = i - j + 1;
+				cyclestage(cycleStages, i, j, stageCurr);
 
-				instruction_type = getOperation(current_instruction, operation);
-				std::string destination;
-				std::string operand1;
-				std::string operand2;
+				instruType = getOperation(instruCurr, operation);
+				std::string target;
+				std::string reg1;
+				std::string reg2;
 
-				if (instruction_type.compare("J") != 0) {
-					readInstruction(destination, current_instruction, operand1, operand2, 'N');
-					if (current_stage == 3) {
-						updateReg(operation, destination, operand1, operand2, register_file);
+				if (instruType.compare("J") != 0) {
+					readInstruction(target, instruCurr, reg1, reg2, 'N');
+					if (stageCurr == 3) {
+						updateReg(operation, target, reg1, reg2, registers);
 					}
 
 				}
-				if (instruction_type.compare("J") == 0) {
-					readInstruction(destination, current_instruction, operand1, operand2, 'J');
-					if (current_stage == 5) {
+				if (instruType.compare("J") == 0) {
+					readInstruction(target, instruCurr, reg1, reg2, 'J');
+					if (stageCurr == 5) {
 
-						int operand1_value;
-						int operand2_value;
+						int reg1Val;
+						int reg2Val;
 						//Qiran Sun
-						operand1_value = register_file[operand1].second;
-						operand2_value = register_file[operand2].second;
-						if ((operation.compare("beq") == 0 && operand1_value == operand2_value) || (operation.compare("bne") == 0 && operand1_value != operand2_value)) {
+						reg1Val = registers[reg1].second;
+						reg2Val = registers[reg2].second;
+
+						if ((operation.compare("beq") == 0 and reg1Val == reg2Val) or (operation.compare("bne") == 0 and reg1Val != reg2Val)) {
 							int k = 1;
 							while (k < 4) {
-								cycle_stages[j + k][i] = "*";
+								cycleStages[j+k][i] = "*";
 								k++;
 							}
-							next_instruction_index = branches[destination];
-							cycle_instructions.push_back(instructions[next_instruction_index]);
-							next_instruction_index++;
+							nextInstru = allBranch[target];
+							cycleInstru.push_back(allInstru[nextInstru]);
+							nextInstru++;
 						}
-
 					}
 				}
 
-				if (current_stage == 5 && find(cycle_stages[j].begin(), cycle_stages[j].end(), "*") == cycle_stages[j].end()) {
-					register_file[destination].first = register_file[destination].second;
+				if (stageCurr == 5 and find(cycleStages[j].begin(), cycleStages[j].end(), "*") == cycleStages[j].end()) {
+					registers[target].first = registers[target].second;
 				}
-				if (j == (int)cycle_instructions.size() - 1 && current_stage == 5) {
-					printOut(cycle_instructions, cycle_stages, register_file);
+				if (j == cycleInstru.size() - 1 and stageCurr == 5) {
+					printOut(cycleStages, cycleInstru, registers);
 					cout << "END OF SIMULATION" << endl;
 					return 0;
 				}
 				j++;
 			}
-			printOut(cycle_instructions, cycle_stages, register_file);
+			printOut(cycleStages, cycleInstru, registers);
 			i++;
-
 		}
 	}
 	//Hongbo Zhao
 	if (string(argv[1]).compare("N") == 0) {
 		cout << "START OF SIMULATION (no forwarding)" << endl << "----------------------------------------------------------------------------------" << endl;
-		int next_instruction_index = 0;
-		vector<int> nops_number;
+		int nextInstru = 0;
+		vector<int> nopNum;
 		int i = 0;
 		while (i < 16) {
-			nops_number.push_back(0);
+			nopNum.push_back(0);
 			i++;
 		}
 		i = 0;
 		while (i < 16) {
 			int j = 0;
-			while (j <= (int)cycle_instructions.size()) {
-				std::string current_instruction;
+			while (j <= cycleInstru.size()) {
+				std::string instruCurr;
 				std::string operation;
-				std::string instruction_type;
+				std::string instruType;
 				if (j == i) {
-					if ((int)cycle_instructions.size() != j + 1) {
-						if (next_instruction_index >= (int)instructions.size()) {
+					if (cycleInstru.size() != j + 1) {
+						if (nextInstru >= allInstru.size()) {
 							break;
 						}
-						instruction_type = getOperation(instructions[next_instruction_index], operation);
-						if (instruction_type.compare("branch") == 0) {
-							next_instruction_index++;
+						instruType = getOperation(allInstru[nextInstru], operation);
+						if (instruType.compare("branch") == 0) {
+							nextInstru++;
 						}
-						cycle_instructions.push_back(instructions[next_instruction_index]);
-						next_instruction_index++;
+						cycleInstru.push_back(allInstru[nextInstru]);
+						nextInstru++;
 					}
 				}
-				if (j == (int)cycle_instructions.size()) {
+				if (j == cycleInstru.size()) {
 					break;
 				}
 
-				current_instruction = cycle_instructions[j];
-				int current_stage;
-				current_stage = i - j + 1;
+				instruCurr = cycleInstru[j];
+				int stageCurr;
+				stageCurr = i - j + 1;
 
-				instruction_type = getOperation(current_instruction, operation);
-				std::string destination;
-				std::string operand1;
-				std::string operand2;
-				if (instruction_type.compare("nop") == 0) {
-					cycleStageN(cycle_stages, i, j, current_stage, nops_number);
+				instruType = getOperation(instruCurr, operation);
+				std::string target;
+				std::string reg1;
+				std::string reg2;
+				if (instruType.compare("nop") == 0) {
+					cycleStageN(cycleStages, i, j, stageCurr, nopNum);
 				}
-				else if (instruction_type.compare("J") != 0) {
-					readInstruction(destination, current_instruction, operand1, operand2, 'N');
-					destinations[destination] = current_stage;
-					if (current_stage == 3) {
-						int nop = getNop(operand1, operand2, destinations);
+				else if (instruType.compare("J") != 0) {
+					readInstruction(target, instruCurr, reg1, reg2, 'N');
+					targets[target] = stageCurr;
+					if (stageCurr == 3) {
+						int nop = getNop(targets, reg1, reg2);
 						if (nop) {
-							if (nop == 2) {
-								cycle_instructions.insert(cycle_instructions.begin() + j, nop, "nop");
-								vector<string> temp_stage = cycle_stages[j];
-								temp_stage[i] = "*";
-								cycle_stages.insert(cycle_stages.begin() + j, nop, temp_stage);
-								cycle_stages[j + nop][i] = "ID";
-
-								if (cycle_stages[j + nop + 1].size() != 0) {
-									cycle_stages[j + nop + 1][i] = "IF";
-								}
-
-								j = j + 2;
-								nops_number[j] = 1;
-								nops_number[j + 1] = 1;
-								break;
-
-							}
 							if (nop == 1) {
-								cycle_instructions.insert(cycle_instructions.begin() + j, nop, "nop");
-								vector<string> temp_stage = cycle_stages[j];
-								temp_stage[i] = "*";
-								cycle_stages.insert(cycle_stages.begin() + j, nop, temp_stage);
-								cycle_stages[j + nop][i] = "ID";
+								cycleInstru.insert(cycleInstru.begin() + j, nop, "nop");
+								vector<string> tempStage = cycleStages[j];
+								tempStage[i] = "*";
+								cycleStages.insert(cycleStages.begin() + j, nop, tempStage);
+								cycleStages[j + nop][i] = "ID";
 
-								if (cycle_stages[j + nop + 1].size() != 0) {
-									cycle_stages[j + nop + 1][i] = "IF";
+								if (cycleStages[j + nop + 1].size() != 0) {
+									cycleStages[j + nop + 1][i] = "IF";
 								}
 								j = j + 1;
 								break;
 							}
 
+							if (nop == 2) {
+								cycleInstru.insert(cycleInstru.begin() + j, nop, "nop");
+								vector<string> tempStage = cycleStages[j];
+								tempStage[i] = "*";
+								cycleStages.insert(cycleStages.begin() + j, nop, tempStage);
+								cycleStages[j + nop][i] = "ID";
+
+								if (cycleStages[j + nop + 1].size() != 0) {
+									cycleStages[j + nop + 1][i] = "IF";
+								}
+
+								j = j + 2;
+								nopNum[j] = 1;
+								nopNum[j+1] = 1;
+								break;
+
+							}
 						}
-						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
+						cycleStageN(cycleStages, i, j, stageCurr, nopNum);
 					}
-					else if (current_stage == 5) {
-						updateReg(operation, destination, operand1, operand2, register_file);
-						register_file[destination].first = register_file[destination].second;
-						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
+					else if (stageCurr == 5) {
+						updateReg(operation, target, reg1, reg2, registers);
+						registers[target].first = registers[target].second;
+						cycleStageN(cycleStages, i, j, stageCurr, nopNum);
 					}
 					else {
-						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
+						cycleStageN(cycleStages, i, j, stageCurr, nopNum);
 					}
-
 				}
-				else if (instruction_type.compare("J") == 0) {
-					readInstruction(destination, current_instruction, operand1, operand2, 'J');
-					destinations[destination] = current_stage;
+				else if (instruType.compare("J") == 0) {
+					readInstruction(target, instruCurr, reg1, reg2, 'J');
+					targets[target] = stageCurr;
 
-					if (current_stage == 3) {
-						int nop = getNop(operand1, operand2, destinations);
+					if (stageCurr == 3) {
+						int nop = getNop(targets, reg1, reg2);
 						if (nop) {
 							if (nop == 2) {
-								cycle_instructions.insert(cycle_instructions.begin() + j, nop, "nop");
-								vector<string> temp_stage = cycle_stages[j];
-								temp_stage[i] = "*";
-								cycle_stages.insert(cycle_stages.begin() + j, nop, temp_stage);
-								cycle_stages[j + nop][i] = "ID";
+								cycleInstru.insert(cycleInstru.begin() + j, nop, "nop");
+								vector<string> tempStage = cycleStages[j];
+								tempStage[i] = "*";
+								cycleStages.insert(cycleStages.begin() + j, nop, tempStage);
+								cycleStages[j + nop][i] = "ID";
 
-								if (cycle_stages[j + nop + 1].size() != 0) {
-									cycle_stages[j + nop + 1][i] = "IF";
+								if (cycleStages[j + nop + 1].size() != 0) {
+									cycleStages[j + nop + 1][i] = "IF";
 								}
 								j = j + 2;
-								nops_number[j] = 1;
-								nops_number[j + 1] = 1;
-
+								nopNum[j] = 1;
+								nopNum[j + 1] = 1;
 							}
 							if (nop == 1) {
-								cycle_instructions.insert(cycle_instructions.begin() + j, nop, "nop");
-								vector<string> temp_stage = cycle_stages[j];
-								temp_stage[i] = "*";
-								cycle_stages.insert(cycle_stages.begin() + j, nop, temp_stage);
-								cycle_stages[j + nop][i] = "ID";
+								cycleInstru.insert(cycleInstru.begin() + j, nop, "nop");
+								vector<string> tempStage = cycleStages[j];
+								tempStage[i] = "*";
+								cycleStages.insert(cycleStages.begin() + j, nop, tempStage);
+								cycleStages[j + nop][i] = "ID";
 
-								if (cycle_stages[j + nop + 1].size() != 0) {
-									cycle_stages[j + nop + 1][i] = "IF";
+								if (cycleStages[j + nop + 1].size() != 0) {
+									cycleStages[j + nop + 1][i] = "IF";
 								}
 								j = j + 1;
 							}
-
 						}
 						else {
-							cycleStageN(cycle_stages, i, j, current_stage, nops_number);
+							cycleStageN(cycleStages, i, j, stageCurr, nopNum);
 						}
 					}
-					else if (current_stage == 5) {
-						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
-						int operand1_value;
-						int operand2_value;
-						operand1_value = register_file[operand1].second;
-						operand2_value = register_file[operand2].second;
+					else if (stageCurr == 5) {
+						cycleStageN(cycleStages, i, j, stageCurr, nopNum);
+						int reg1Val;
+						int reg2Val;
+						reg1Val = registers[reg1].second;
+						reg2Val = registers[reg2].second;
 
-						if ((operation.compare("beq") == 0 && operand1_value == operand2_value) || (operation.compare("bne") == 0 && operand1_value != operand2_value)) {
-							next_instruction_index = branches[destination];
-							cycle_instructions.push_back(instructions[next_instruction_index]);
-							next_instruction_index++;
-							cyclestage(cycle_stages, i, j + 4, 1);
+						if ((operation.compare("beq") == 0 and reg1Val == reg2Val) or (operation.compare("bne") == 0 and reg1Val != reg2Val)) {
+							nextInstru = allBranch[target];
+							cycleInstru.push_back(allInstru[nextInstru]);
+							nextInstru++;
+							cyclestage(cycleStages, i, j + 4, 1);
 						}
 					}
 					else if (i != j) {
-						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
+						cycleStageN(cycleStages, i, j, stageCurr, nopNum);
 					}
 				}
 
-				if (j == (int)cycle_instructions.size() - 1 && current_stage == 5) {
-					printOut(cycle_instructions, cycle_stages, register_file);
+				if (j == cycleInstru.size() - 1 and stageCurr == 5) {
+					printOut(cycleStages, cycleInstru, registers);
 					cout << "END OF SIMULATION" << endl;
 					return 0;
 				}
 				j++;
 			}
-			printOut(cycle_instructions, cycle_stages, register_file);
+			printOut(cycleStages, cycleInstru, registers);
 			i++;
 		}
 	}
