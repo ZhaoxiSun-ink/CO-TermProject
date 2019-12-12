@@ -234,67 +234,66 @@ void printOut(std::vector<std::string> const& cycleInstru, std::vector<std::vect
 	cout << "----------------------------------------------------------------------------------\n";
 }
 
-//edited
-int get_nopNumber(std::string operand1, std::string operand2, map<string, int> destinations) {
+int get_nopNumber(std::string reg1, std::string reg2, map<string, int> targets) {
 	int tmp;
 	map<string, int>::iterator it1, it2;
-	it1 = destinations.find(operand1);
-	it2 = destinations.find(operand2);
-	if (it1 != destinations.end() && it2 != destinations.end()) {
-		tmp = min(destinations[operand1], destinations[operand2]);
-		if (tmp > 6) 	return 0;
+	it1 = targets.find(reg1);
+	it2 = targets.find(reg2);
+	if (it1 != targets.end() && it2 != targets.end()) {
+		tmp = min(targets[reg1], targets[reg2]);
+		if (tmp > 6)  return 0;
 		else return 6 - tmp;
 	}
-	else if (it1 != destinations.end()) {
-		tmp = destinations[operand1];
-		if (tmp > 6) 	return 0;
-		else	return 6 - tmp;
+	else if (it1 != targets.end()) {
+		tmp = targets[reg1];
+		if (tmp > 6)  return 0;
+		else return 6 - tmp;
 	}
-	else if (it2 != destinations.end()) {
-		tmp = destinations[operand2];
-		if (tmp > 6)	return 0;
-		else 	return 6 - tmp;
+	else if (it2 != targets.end()) {
+		tmp = targets[reg2];
+		if (tmp > 6) return 0;
+		else  return 6 - tmp;
 	}
-	else 	return 0;
+	else  return 0;
 }
 
 
 
-//save return in this function
-//stop the whole function
-void set_cycleStages_no_forwarding(vector<vector<string> > & cycle_stages, int i, int j, int current_stage, vector<int> & nop_num) {
-	if (nop_num[j] > 0) {
-		cycle_stages[j][i] = cycle_stages[j][i - 1];
-		nop_num[j]--;
-		return;
-	}
-	else if (current_stage == 1) {
-		for (int k = 0; k < j; k++) {
-			cycle_stages[j].push_back(".");
-		}
-		cycle_stages[j].push_back("IF");
-		for (int k = j + 1; k < 16; k++) {
-			cycle_stages[j].push_back(".");
-		}
-	}
-	else if ((cycle_stages[j][i - 1] == "*" && cycle_stages[j][i - 3] == "IF") || (cycle_stages[j][i - 1] == "*" && cycle_stages[j][i - 3] == "ID")) {
-		cycle_stages[j][i] = "*";
-		return;
-	}
 
-	else if (current_stage == 2) {
-		cycle_stages[j][i] = "ID";
+void cycleStageN(vector<vector<string> > & cycleStages, int i, int j, int stageCurr, vector<int> & nopNum) {
+	if (nopNum[j] > 0) {
+		cycleStages[j][i] = cycleStages[j][i-1];
+		nopNum[j]--;
 	}
-	else if (current_stage == 3) {
-		cycle_stages[j][i] = "EX";
+	else if (stageCurr == 1) {
+		int k = 0;
+		while (k < j) {
+			cycleStages[j].push_back(".");
+			k++;
+		}
+		cycleStages[j].push_back("IF");
+		k = j + 1;
+		while (k < 16) {
+			cycleStages[j].push_back(".");
+			k++;
+		}
 	}
-	else if (current_stage == 4) {
-		cycle_stages[j][i] = "MEM";
+	else if ((cycleStages[j][i-1].compare("*") == 0 and cycleStages[j][i-3].compare("IF") == 0) or cycleStages[j][i-1].compare("*") == 0 and cycleStages[j][i - 3].compare("ID") == 0) {
+		cycleStages[j][i] = "*";
 	}
-	else if (current_stage == 5 && cycle_stages[j][i - 1] != "*") {
-		cycle_stages[j][i] = "WB";
+	else if (stageCurr == 5 and cycleStages[j][i-1] != "*") {
+		cycleStages[j][i] = "WB";
 	}
-	return;
+	else {
+		switch (stageCurr) {
+		case 2:
+			cycleStages[j][i] = "ID";
+		case 3:
+			cycleStages[j][i] = "EX";
+		case 4:
+			cycleStages[j][i] = "MEM";
+		}
+	}
 }
 
 
@@ -478,7 +477,7 @@ int main(int argc, const char* argv[]) {
 				std::string operand1;
 				std::string operand2;
 				if (instruction_type.compare("nop") == 0) {
-					set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number);
+					cycleStageN(cycle_stages, i, j, current_stage, nops_number);
 				}
 				else if (instruction_type.compare("J") != 0) {
 					readInstruction(current_instruction, destination, operand1, operand2, 'N');
@@ -518,15 +517,15 @@ int main(int argc, const char* argv[]) {
 							}
 
 						}
-						set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number);
+						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
 					}
 					else if (current_stage == 5) {
 						updateReg(operation, destination, operand1, operand2, register_file);
 						register_file[destination].first = register_file[destination].second;
-						set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number);
+						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
 					}
 					else {
-						set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number);
+						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
 					}
 
 				}
@@ -567,11 +566,11 @@ int main(int argc, const char* argv[]) {
 
 						}
 						else {
-							set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number);
+							cycleStageN(cycle_stages, i, j, current_stage, nops_number);
 						}
 					}
 					else if (current_stage == 5) {
-						set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number);
+						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
 						int operand1_value;
 						int operand2_value;
 						operand1_value = register_file[operand1].second;
@@ -585,7 +584,7 @@ int main(int argc, const char* argv[]) {
 						}
 					}
 					else if (i != j) {
-						set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number);
+						cycleStageN(cycle_stages, i, j, current_stage, nops_number);
 					}
 				}
 
