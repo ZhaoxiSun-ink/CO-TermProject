@@ -13,37 +13,23 @@ using namespace std;
  * If it successefully reads in the instructions, then return true
  * Else return false
  */
-void getInstructions(const char argc[], vector<string>& instructions, map<string, int>& branches) {
-	ifstream myfile;
-	myfile.open(argc);
 
-	string instruction;
-	int line_num = 0;
-	while (getline(myfile, instruction)) {
-		line_num++;
-		instructions.push_back(instruction);
-		// Check if this is a branch label by checking the last char
-		int len = instruction.length();
-		if (instruction[len - 1] == ':') {
-			// Get the branch name
-			string branch_name = instruction.substr(0, len - 1);
-			// The branch starts from the next line
-			branches[branch_name] = line_num;
-		}
-	}
-}
 
 
 void set_cycleStages(vector<vector<string> > & cycle_stages, int i, int j, int current_stage) {
 
 
 	if (current_stage == 1) {
-		for (int k = 0; k < j; k++) {
+		int k = 0;
+		while (k < j) {
 			cycle_stages[j].push_back(".");
+			k++;
 		}
 		cycle_stages[j].push_back("IF");
-		for (int k = j + 1; k < 16; k++) {
+		k = j + 1;
+		while (k < 16) {
 			cycle_stages[j].push_back(".");
+			k++;
 		}
 	}
 	// If there is * in current stage, then no need to change anything
@@ -420,7 +406,24 @@ int main(int argc, const char* argv[]) {
 		cycle_stages.push_back(temp);
 	}
 	//read instructions into vector
-	getInstructions(argv[2], instructions, branches);
+	//getInstructions(argv[2], instructions, branches);
+	ifstream myfile;
+	myfile.open(argv[2]);
+
+	string instruction;
+	int line_num = 0;
+	while (getline(myfile, instruction)) {
+		line_num++;
+		instructions.push_back(instruction);
+		// Check if this is a branch label by checking the last char
+		int len = instruction.length();
+		if (instruction[len - 1] == ':') {
+			// Get the branch name
+			string branch_name = instruction.substr(0, len - 1);
+			// The branch starts from the next line
+			branches[branch_name] = line_num;
+		}
+	}
 	if (!strncmp(argv[1], "F", 1)) {
 		cout << "START OF SIMULATION (forwarding)" << endl;
 		cout << "----------------------------------------------------------------------------------" << endl;
