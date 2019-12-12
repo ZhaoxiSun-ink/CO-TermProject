@@ -2,12 +2,20 @@
 #Zhaoxi Sun & Hongbao Zhao & Qiran Sun & Yang Yi
 
 import sys
+import re
 
-
+def myAtoi(string): 
+    res = 0
+  
+    # Iterate through all characters of input string and  
+    # update result 
+    for i in range(len(string)): 
+        res = res * 10 + (ord(string[i]) - ord('0')) 
+  
+    return res 
 
 
 def getInstructions(arguments, instructions, branches):#Hongbo Zhao
-    mode = arguments[0]
     file = arguments[1]
     line_num = 0
     f= open(file)
@@ -19,8 +27,6 @@ def getInstructions(arguments, instructions, branches):#Hongbo Zhao
         if line[lenOfInst-1] == ":":
             branch_name = line[0: lenOfInst-1]
             branches[branch_name] = line_num
-    f.close()
-
 
 def set_cycleStages(cycle_stages, i, j, current_stage):#Hongbo Zhao
     if current_stage == 1:
@@ -30,7 +36,7 @@ def set_cycleStages(cycle_stages, i, j, current_stage):#Hongbo Zhao
             k += 1
         cycle_stages[j].append("IF");
         k = j + 1
-        for k in range(16):
+        for k in range(k,16):
             cycle_stages[j].append(".")
     elif cycle_stages[j][i] == "*":
         pass
@@ -64,7 +70,6 @@ def getOperation(instruction, operation):#Hongbo Zhao
         index += 1
     
     operation = instruction[0:index+1]
-    #print(operation, '++++++++++++++++')
     if operation == "bne" or operation == "beq":
         return "J",operation
     else:
@@ -72,8 +77,6 @@ def getOperation(instruction, operation):#Hongbo Zhao
 
     
 def read_instruction(instruction, destination,operand1,operand2,tt):#Zhaoxi Sun
-    #gloabl variables to allow us to change the data in the function
-
     #N type
     if tt == "N":
         operand_count = 0
@@ -105,7 +108,7 @@ def read_instruction(instruction, destination,operand1,operand2,tt):#Zhaoxi Sun
                     operand2 = instruction[i+1:i+3]
             elif instruction[i-1] == "," and operand_count == 1:
                 destination = instruction[i:len(instruction)]
-    return [destination, operand1,operand2]
+    return [destination, operand1, operand2]
                
 def set_destinationStage(destination, current_stage, destinations):#Hongbo Zhao
     destinations[destination] = current_stage
@@ -145,7 +148,6 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
     
     if operation[-1] == " ":
         operation = operation[:-1]
-    #print(operation, "adaaaaaaaa")
     if operation == "add" or operation == "and" or operation == "or" or operation == "slt":
         v2 = register_file[operand2][1]
         if operation == "add":
@@ -160,8 +162,7 @@ def update_registerFile(operation, destination, operand1, operand2, register_fil
             else:
                 v0 = 0
     else:
-        #print(operand2)
-        v2 = int(operand2)
+        v2 = myAtoi(operand2)
         if operation== 'addi':
             v0 = v1 + v2
         elif operation == 'andi':
@@ -279,7 +280,7 @@ def set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage,nop_num): # 
             cycle_stages[j].append(".")
         cycle_stages[j].append("IF")
         k=j+1
-        for k in range(16):
+        for k in range(k,16):
             cycle_stages[j].append(".")
         
     
@@ -483,10 +484,12 @@ if __name__ == '__main__':#Hongbo Zhao
                     elif i != j:
                         set_cycleStages_no_forwarding(cycle_stages, i, j, current_stage, nops_number)
                 if (j == len(cycle_instructions)-1) and current_stage == 5:
-                    print_cycle(cycle_instructions, cycle_stages, register_file)
-                    print("END OF SIMULATION")
+                    break
             print_cycle(cycle_instructions, cycle_stages, register_file)
-    print("END OF SIMULATION")
+            if (j == len(cycle_instructions)-1) and current_stage == 5:
+                print("END OF SIMULATION")
+                break            
+
                            
                         
                         
