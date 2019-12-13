@@ -53,7 +53,6 @@ void cyclestage(int i, int j, vector<vector<string>>& cycleStages, int stageCurr
 			cycleStages[j][i] = "WB";
 		}
 	}
-
 	return;
 }
 
